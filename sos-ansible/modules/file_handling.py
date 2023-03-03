@@ -5,10 +5,11 @@ Provide all file handling functions
 import json
 import os
 import logging
+import sys
+import re
 
-DIVISOR = 10 * "-"
 
-logger = logging.getLogger('modules.file_handling')
+logger = logging.getLogger(__name__)
 
 
 def read_policy(policy_name):
@@ -18,28 +19,68 @@ def read_policy(policy_name):
     return data
 
 
-def process_rule(files, rules, file_name, query):
+def validate_tgt_dir(directory):
+    """ Validate if Target Directory exists"""
+    case_dir = os.path.join('/tmp/', directory)
+    if os.path.isdir(case_dir):
+        logging.error("The target directory \"%s\" exists. "
+             " Please, remove it before running the script.",
+             case_dir
+        )
+        sys.exit(1)
+
+
+def create_dir(directory, hostname):
+    """ Create a directory"""
+    case_dir = os.path.join('/tmp/', directory)
+    try:
+        if not os.path.isdir(case_dir):
+            os.mkdir(case_dir)
+    except OSError as error:
+        logging.error(error)
+        sys.exit(1)
+    final_directory = os.path.join('/tmp/', directory, hostname)
+    try:
+        if not os.path.isdir(final_directory):
+            os.mkdir(final_directory)
+    except OSError as error:
+        logging.error(error)
+        sys.exit(1)
+    return final_directory
+
+
+def create_output(final_directory, rules, data):
+    """Create the output data for each rule processed"""
+    out_file = rules.replace(" ", "_")
+    with open(f"{final_directory}/{out_file}", "a", encoding="utf-8") as file:
+        for lines in data:
+            file.write(lines)
+
+
+def process_rule(hostname, tgt_dir, rules, file_name, query):
     """
     Process each Rule and gather matching data from sosreport files.
     Returns str
     """
     data = ""
-    if query:
-        if not isinstance(query, list):
-            query = query.split()
+    match_count = 0
 
     if os.path.exists(file_name):
         with open(file_name, "r", encoding="utf-8") as file:
             if not query:
-                data = file.readlines()
+                for lines in file.readlines():
+                    data += str(lines)
+                    match_count += 1
             else:
                 for lines in file.readlines():
-                    for item in query:
-                        if item.lower() in lines or item.upper() in lines:
-                            data += str(lines)
+                    reg_rule = re.compile(query, re.IGNORECASE)
+                    if reg_rule.findall(lines):
+                        data += str(lines)
+                        match_count += 1
     else:
         logging.warning("Skipping %s. Path does not exist.", file_name)
-    if not data:
-        logging.debug("Criteria %s not met.", query)
-    else:
-        logging.debug("Rule: %s - %s\n%s\n", rules, files, data)
+
+    if data:
+        final_directory = create_dir(tgt_dir, hostname)
+        create_output(final_directory, rules, data)
+    return match_count

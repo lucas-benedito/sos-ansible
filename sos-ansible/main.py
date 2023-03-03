@@ -6,38 +6,56 @@ sos_ansible, main program
 import argparse
 import logging
 import os
-from modules import file_handling
-from modules import locating_sos
+import sys
+import inquirer
+from modules.file_handling import read_policy,process_rule,validate_tgt_dir
+from modules.locating_sos import LocateReports
 
 SOS_DIRECTORY = os.path.abspath("/tmp/test_sosreport/")
-RULES_FILE = os.path.abspath("/home/lbenedit/labs/ansible/policy_template/rules.json")
+RULES_FILE = os.path.abspath("/tmp/rules/rules.json")
+
+def get_user_input(sos_directory):
+    """Select workdir"""
+    choice = os.listdir(sos_directory)
+    questions = [
+        inquirer.List('case',
+                message="Choose the sos directory",
+                choices=choice
+            ),
+    ]
+    return inquirer.prompt(questions)['case']
 
 
-def data_input(sos_directory, rules_file):
+def data_input(sos_directory, rules_file, user_choice):
     """
     Load the external sosreport and policy rules
     """
     logging.info("Validating sosreports on target directory: %s", sos_directory)
-    test = locating_sos.LocateReports()
-    node_data = test.run({sos_directory})
-    logging.info("Validating rules in place:")
-    curr_policy = file_handling.read_policy(rules_file)
+    report_data = LocateReports()
+    node_data = report_data.run({sos_directory}, user_choice)
+    logging.info("Validating rules in place: %s", rules_file)
+    curr_policy = read_policy(rules_file)
     return node_data, curr_policy
 
 
-def rules_processing(node_data, curr_policy):
+def rules_processing(node_data, curr_policy, user_choice):
     """
     Read the rules.json file and load it on the file_handling modules for processing.
     """
     for hosts in node_data:
         hostname = hosts['hostname']
         path = hosts['path']
-        logging.info("Checking node %s:", hostname)
+        analisys_summary = f"Summary\n{hostname}:\n--------\nController Node: {hosts['controller']}\n--------\n"
+        logging.info("Processing node %s:", hostname)
         for rules in curr_policy:
             iterator = curr_policy[rules]
             for files in iterator['files']:
                 to_read = f"{path}/{iterator['path']}/{files}"
-                file_handling.process_rule(files, rules, to_read, iterator['query'])
+                query = iterator['query'].replace(', ', '|')
+                match_count = process_rule(hostname, user_choice, rules, to_read, query)
+            analisys_summary += f"{rules}: {match_count}\n"
+        logging.critical(analisys_summary)
+
 
 
 def main():
@@ -72,13 +90,17 @@ def main():
     )
 
     console = logging.StreamHandler()
-    console.setLevel(logging.DEBUG)
-
+    console.setLevel(logging.CRITICAL)
     logging.getLogger('').addHandler(console)
 
-    node_data, curr_policy = data_input(sos_directory, rules_file)
+    user_choice = get_user_input(sos_directory)
+    validate_tgt_dir(user_choice)
+    node_data, curr_policy = data_input(sos_directory, rules_file, user_choice)
+    if not node_data:
+        logging.error("No sosreports found, please review the directory %s", sos_directory)
+        sys.exit(1)
     logging.info(node_data)
-    rules_processing(node_data, curr_policy)
+    rules_processing(node_data, curr_policy, user_choice)
 
 
 if __name__ == "__main__":
