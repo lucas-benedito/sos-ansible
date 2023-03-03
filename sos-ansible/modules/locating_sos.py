@@ -35,7 +35,8 @@ class LocateReports():
             pass
         return "NOTFOUND"
 
-    def run(self, terms):
+
+    def run(self, terms, user_choice):
         """Return the hostname, path keypair"""
         entry = {
             'hostname': '',
@@ -45,11 +46,11 @@ class LocateReports():
         # lookups in general are expected to both take a list as input and output a list
         # this is done so they work with the looping construct 'with_'.
         ret = []
-        for directory in terms:
-            directory = os.path.abspath(directory)
+        for sos_directory in terms:
+            sos_dir = os.path.abspath(sos_directory)
             try:
                 with open('/tmp/outme', 'w', encoding="utf-8") as file:
-                    for directory in glob.glob(f'{directory}/**/sosreport-*', recursive=False):
+                    for directory in glob.glob(f'{sos_dir}/{user_choice}/sosreport-*', recursive=False):
                         file.write(f'{directory}\n')
                         if not os.path.isdir(directory):
                             continue
