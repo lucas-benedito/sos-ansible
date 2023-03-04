@@ -93,7 +93,12 @@ def main():
     console.setLevel(logging.CRITICAL)
     logging.getLogger('').addHandler(console)
 
-    user_choice = get_user_input(sos_directory)
+    if os.path.isdir(sos_directory):
+        user_choice = get_user_input(sos_directory)
+    else:
+        logging.error("The selected directory %s doesn't exist."
+             "Select a new directory and try again.", sos_directory)
+        sys.exit(1)
     validate_tgt_dir(user_choice)
     node_data, curr_policy = data_input(sos_directory, rules_file, user_choice)
     if not node_data:
