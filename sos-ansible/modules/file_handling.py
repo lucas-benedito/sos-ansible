@@ -7,7 +7,7 @@ import os
 import logging
 import sys
 import re
-
+from shutil import rmtree
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +23,13 @@ def validate_tgt_dir(directory):
     """ Validate if Target Directory exists"""
     case_dir = os.path.join('/tmp/', directory)
     if os.path.isdir(case_dir):
-        logging.error("The target directory \"%s\" exists. "
-             " Please, remove it before running the script.",
-             case_dir
-        )
-        sys.exit(1)
+        logging.info("The target directory %s exists. "
+             "Removing it before running the script.", case_dir)
+        try:
+            rmtree(case_dir)
+        except Exception as error: # pylint: disable=broad-except
+            logger.error(error)
+            sys.exit(1)
 
 
 def create_dir(directory, hostname):
