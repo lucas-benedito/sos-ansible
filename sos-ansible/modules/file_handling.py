@@ -72,11 +72,14 @@ def process_rule(hostname, tgt_dir, rules, file_name, query):
                     data += str(lines)
                     match_count += 1
             else:
-                for lines in file.readlines():
-                    reg_rule = re.compile(query, re.IGNORECASE)
-                    if reg_rule.findall(lines):
-                        data += str(lines)
-                        match_count += 1
+                try:
+                    for lines in file.readlines():
+                        reg_rule = re.compile(query, re.IGNORECASE)
+                        if reg_rule.findall(lines):
+                            data += str(lines)
+                            match_count += 1
+                except Exception as e:
+                        logger.error(e)
     else:
         logging.warning("Skipping %s. Path does not exist.", file_name)
 
