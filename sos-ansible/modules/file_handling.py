@@ -23,12 +23,12 @@ def validate_tgt_dir(directory):
     """ Validate if Target Directory exists"""
     case_dir = os.path.join('/tmp/', directory)
     if os.path.isdir(case_dir):
-        logging.info(f"The target directory {case_dir} exists. "
-             "Removing it before running the script.")
+        logging.info("The target directory %s exists. "
+             "Removing it before running the script.", case_dir)
         try:
             rmtree(case_dir)
-        except Exception as e:
-            logger.error(e)
+        except Exception as error: # pylint: disable=broad-except
+            logger.error(error)
             sys.exit(1)
 
 
