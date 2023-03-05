@@ -102,3 +102,53 @@ Filesystem  Installed_Packages  Running_Processes
 $ cat Filesystem
 /dev/mapper/rhel-amazing  12345   12345         0 100% /amazingfs
 ```
+
+## Running tool via container
+
+An alternative to running this on cli directly is to use the container version:
+
+Currently the image must be built locally using the following:
+
+from the sos-ansible directory
+
+```
+docker build -t sos-ansible:0.0.1 .
+``` 
+
+
+Once the image is built use either `podman` or `docker` to run the command:
+
+``` 
+podman run -it --rm -v /tmp/:/tmp/ -v /full/path/to/rules.json:/tmp/rules.json -v /full/path/to/sos-ansible.log:/home/ansible/sos-ansible.log sos-ansible:0.0.1 -d /tmp/sos_reports/ -r /tmp/rules.json -c 999999 
+```
+
+Breakdown of args:
+  - -d directory where sosreports were untarred(should be /tmp/sos_reports if following the earlier instructions)
+  - -r path to rules(this can be whatever you specified in the -v option for mounting)
+  - -c case/ticket number where you untarred the sosreport to (example from doc is 999999) this argument is mandatory for containerized invocations
+
+## Additional notes for troubleshooting containerized tool
+
+Currently if you need to debug what is happening inside the container you can comment out the ENTRYPOINT and replace it with CMD
+
+example:
+
+```
+ENTRYPOINT ["python", "main.py"]
+
+```
+
+Replace with:
+
+```
+CMD ["/bin/bash"]
+
+```
+
+Rebuild the container and then use `podman` or `docker` and replace the command:
+
+```
+docker build -t sos-ansible-debug:0.0.1 .
+
+podman run -it --rm -v /tmp/:/tmp/ -v /full/path/to/rules.json:/tmp/rules.json -v /full/path/to/sos-ansible.log:/home/ansible/sos-ansible.log sos-ansible:0.0.1 bash
+```

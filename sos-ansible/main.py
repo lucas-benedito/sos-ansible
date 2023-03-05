@@ -112,15 +112,13 @@ def main():
         if os.environ["IS_CONTAINER"]:
             if not params.case:
                 logging.error("A case number must be used if running from a container")
-                sys.exit(1)
-            else:
-                user_choice = params.case
+                sys.exit("A case number must be used if running from a container")
     except KeyError:
         pass
     # if case number is not provided prompt if provided just use it
     if os.path.isdir(sos_directory) and not params.case:
         user_choice = get_user_input(sos_directory)
-    elif params.case:
+    elif os.path.isdir(sos_directory) and params.case:
         user_choice = params.case
     else:
         logging.error(
