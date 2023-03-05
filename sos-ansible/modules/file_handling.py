@@ -20,7 +20,7 @@ def read_policy(policy_name):
             return data
         except decoder.JSONDecodeError as error:
             logger.error(error)
-            sys.exit(f'Invalid json in {policy_name} file')
+            sys.exit(f"Invalid json in {policy_name} file")
 
 
 def validate_tgt_dir(directory):
@@ -28,7 +28,8 @@ def validate_tgt_dir(directory):
     case_dir = os.path.join("/tmp/", directory)
     if os.path.isdir(case_dir):
         logging.info(
-            "The target directory %s exists. ", case_dir + "Removing it before running the script."
+            "The target directory %s exists. ",
+            case_dir + "Removing it before running the script.",
         )
         try:
             rmtree(case_dir)
