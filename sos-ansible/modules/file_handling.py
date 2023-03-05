@@ -2,7 +2,7 @@
 Provide all file handling functions
 """
 
-import json
+from json import load, decoder
 import os
 import logging
 import sys
@@ -15,33 +15,38 @@ logger = logging.getLogger(__name__)
 def read_policy(policy_name):
     """Read Rules File and returns its contents"""
     with open(policy_name, "r", encoding="utf-8") as file:
-        data = json.load(file)
-    return data
+        try:
+            data = load(file)
+            return data
+        except decoder.JSONDecodeError as error:
+            logger.error(error)
+            sys.exit(f'Invalid json in {policy_name} file')
 
 
 def validate_tgt_dir(directory):
-    """ Validate if Target Directory exists"""
-    case_dir = os.path.join('/tmp/', directory)
+    """Validate if Target Directory exists"""
+    case_dir = os.path.join("/tmp/", directory)
     if os.path.isdir(case_dir):
-        logging.info("The target directory %s exists. "
-             "Removing it before running the script.", case_dir)
+        logging.info(
+            "The target directory %s exists. ", case_dir + "Removing it before running the script."
+        )
         try:
             rmtree(case_dir)
-        except Exception as error: # pylint: disable=broad-except
+        except Exception as error:  # pylint: disable=broad-except
             logger.error(error)
             sys.exit(1)
 
 
 def create_dir(directory, hostname):
-    """ Create a directory"""
-    case_dir = os.path.join('/tmp/', directory)
+    """Create a directory"""
+    case_dir = os.path.join("/tmp/", directory)
     try:
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
     except OSError as error:
         logging.error(error)
         sys.exit(1)
-    final_directory = os.path.join('/tmp/', directory, hostname)
+    final_directory = os.path.join("/tmp/", directory, hostname)
     try:
         if not os.path.isdir(final_directory):
             os.mkdir(final_directory)
@@ -68,7 +73,7 @@ def process_rule(hostname, tgt_dir, rules, file_name, query):
     match_count = 0
 
     if os.path.exists(file_name):
-        with open(file_name, "r", encoding="utf-8") as file:
+        with open(file_name, "r", encoding="utf-8", errors="replace") as file:
             if not query:
                 for lines in file.readlines():
                     data += str(lines)
@@ -80,8 +85,8 @@ def process_rule(hostname, tgt_dir, rules, file_name, query):
                         if reg_rule.findall(lines):
                             data += str(lines)
                             match_count += 1
-                except Exception as error: # pylint: disable=broad-except
-                        logger.error(error)
+                except Exception as error:  # pylint: disable=broad-except
+                    logger.error(error)
     else:
         logging.warning("Skipping %s. Path does not exist.", file_name)
 
