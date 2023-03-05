@@ -1,6 +1,6 @@
 name: Pylint
 
-on: [push]
+on: [pull_request]
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint
+        pip install pylint inquirer
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files './sos-ansible/*.py')
