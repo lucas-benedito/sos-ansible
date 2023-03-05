@@ -78,6 +78,14 @@ def main():
         required=False,
         default="",
     )
+    parser.add_argument(
+        "-c",
+        "--case",
+        type=str,
+        help="Directory number to which the sosreport was extracted",
+        required=False,
+        default=""
+    )
     params = parser.parse_args()
     if params.directory:
         sos_directory = params.directory
@@ -98,7 +106,14 @@ def main():
     console.setLevel(logging.CRITICAL)
     logging.getLogger("").addHandler(console)
 
-    if os.path.isdir(sos_directory):
+    if os.environ('SOS_DIRECTORY'):
+        try:
+            user_choice = params.case
+        except Exception as error:
+            logging.error("A case number must be used if running from a container")
+            sys.exit(1)
+
+    elif os.path.isdir(sos_directory):
         user_choice = get_user_input(sos_directory)
     else:
         logging.error(
