@@ -1,0 +1,33 @@
+{
+    "version": 1,
+    "formatters": {
+        "sos_ansible": {
+            "format": "%(levelname)s:%(message)s"
+        },
+        "sos_ansible_asctime": {
+            "format": "%(asctime)s %(levelname)s:%(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "sos_ansible",
+            "level": "INFO",
+            "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "formatter": "sos_ansible_asctime",
+            "filename": "sos-ansible.log",
+            "level": "DEBUG",
+            "mode": "a"
+        }
+    },
+    "root": {
+        "level": "DEBUG",
+        "handlers": [
+            "console",
+            "file"
+        ]
+    }
+}
