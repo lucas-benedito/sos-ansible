@@ -8,11 +8,9 @@ import logging
 import os
 import sys
 import inquirer
-from modules.file_handling import read_policy,process_rule,validate_tgt_dir
+from modules.file_handling import read_policy, process_rule, validate_tgt_dir
 from modules.locating_sos import LocateReports
-
-SOS_DIRECTORY = os.path.abspath("/tmp/test_sosreport/")
-RULES_FILE = os.path.abspath("/tmp/rules/rules.json")
+from modules.config_manager import load_config
 
 
 def get_user_input(sos_directory):
@@ -66,6 +64,7 @@ def main():
     """
     Main function from sos_ansible. This will process all steps for sosreports reading
     """
+    config = load_config()
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         "-d",
@@ -94,11 +93,11 @@ def main():
     if params.directory:
         sos_directory = params.directory
     else:
-        sos_directory = SOS_DIRECTORY
+        sos_directory = os.path.abspath(config.get("files", "source"))
     if params.rules:
         rules_file = os.path.abspath(params.rules)
     else:
-        rules_file = RULES_FILE
+        rules_file = os.path.abspath(config.get("files", "rules"))
 
     logging.basicConfig(
         filename="sos-ansible.log",

@@ -8,8 +8,10 @@ import logging
 import sys
 import re
 from shutil import rmtree
+from modules.config_manager import load_config
 
 logger = logging.getLogger(__name__)
+config = load_config()
 
 
 def read_policy(policy_name):
@@ -25,7 +27,7 @@ def read_policy(policy_name):
 
 def validate_tgt_dir(directory):
     """Validate if Target Directory exists"""
-    case_dir = os.path.join("/tmp/", directory)
+    case_dir = os.path.join(config.get("files", "target"), directory)
     if os.path.isdir(case_dir):
         logging.info(
             "The target directory %s exists. ",
@@ -35,25 +37,25 @@ def validate_tgt_dir(directory):
             rmtree(case_dir)
         except Exception as error:  # pylint: disable=broad-except
             logger.error(error)
-            sys.exit(1)
+            sys.exit(f"Failure while creating {case_dir}: {error}")
 
 
 def create_dir(directory, hostname):
     """Create a directory"""
-    case_dir = os.path.join("/tmp/", directory)
+    case_dir = os.path.join(config.get("files", "target"), directory)
     try:
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
     except OSError as error:
         logging.error(error)
-        sys.exit(1)
-    final_directory = os.path.join("/tmp/", directory, hostname)
+        sys.exit(f"Failure while creating {case_dir}: {error}")
+    final_directory = os.path.join(config.get("files", "target"), directory, hostname)
     try:
         if not os.path.isdir(final_directory):
             os.mkdir(final_directory)
     except OSError as error:
         logging.error(error)
-        sys.exit(1)
+        sys.exit(f"Failure while creating {final_directory}: {error}")
     return final_directory
 
 
