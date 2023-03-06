@@ -10,7 +10,7 @@ import sys
 import inquirer
 from modules.file_handling import read_policy, process_rule, validate_tgt_dir
 from modules.locating_sos import LocateReports
-from modules.config_manager import load_config
+from modules.config_manager import ConfigParser, validator
 
 
 def get_user_input(sos_directory):
@@ -64,7 +64,6 @@ def main():
     """
     Main function from sos_ansible. This will process all steps for sosreports reading
     """
-    config = load_config()
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         "-d",
@@ -90,6 +89,10 @@ def main():
         required=False,
     )
     params = parser.parse_args()
+
+    config = ConfigParser().load_config()
+    validator(config)
+
     if params.directory:
         sos_directory = params.directory
     else:

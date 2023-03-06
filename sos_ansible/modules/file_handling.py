@@ -8,10 +8,10 @@ import logging
 import sys
 import re
 from shutil import rmtree
-from modules.config_manager import load_config
+from modules.config_manager import ConfigParser
 
 logger = logging.getLogger(__name__)
-config = load_config()
+config = ConfigParser().load_config()
 
 
 def read_policy(policy_name):
