@@ -8,8 +8,8 @@ import logging
 import os
 import sys
 import inquirer
-from modules.file_handling import read_policy,process_rule,validate_tgt_dir
-from modules.locating_sos import LocateReports
+from sos_ansible.modules.file_handling import read_policy,process_rule,validate_tgt_dir
+from sos_ansible.modules.locating_sos import LocateReports
 
 SOS_DIRECTORY = os.path.abspath("/tmp/test_sosreport/")
 RULES_FILE = os.path.abspath("/tmp/rules/rules.json")
