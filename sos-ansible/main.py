@@ -51,7 +51,9 @@ def rules_processing(node_data, curr_policy, user_choice):
             for files in iterator["files"]:
                 to_read = f"{path}/{iterator['path']}/{files}"
                 query = iterator["query"].replace(", ", "|")
-                result_count = process_rule(hostname, user_choice, rules, to_read, query)
+                result_count = process_rule(
+                    hostname, user_choice, rules, to_read, query
+                )
                 match_count += result_count
             analysis_summary += f"{rules}: {match_count}\n"
         logging.critical(analysis_summary)
@@ -78,6 +80,13 @@ def main():
         required=False,
         default="",
     )
+    parser.add_argument(
+        "-c",
+        "--case",
+        type=str,
+        help="Directory number to which the sosreport was extracted",
+        required=False,
+    )
     params = parser.parse_args()
     if params.directory:
         sos_directory = params.directory
@@ -98,8 +107,19 @@ def main():
     console.setLevel(logging.CRITICAL)
     logging.getLogger("").addHandler(console)
 
-    if os.path.isdir(sos_directory):
+    #In order to allow both container and standard command line usage must check for env
+    try:
+        if os.environ["IS_CONTAINER"]:
+            if not params.case:
+                logging.error("A case number must be used if running from a container")
+                sys.exit("A case number must be used if running from a container")
+    except KeyError:
+        pass
+    # if case number is not provided prompt if provided just use it
+    if os.path.isdir(sos_directory) and not params.case:
         user_choice = get_user_input(sos_directory)
+    elif os.path.isdir(sos_directory) and params.case:
+        user_choice = params.case
     else:
         logging.error(
             "The selected directory %s doesn't exist."
