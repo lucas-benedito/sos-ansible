@@ -61,17 +61,16 @@ def rules_processing(node_data, curr_policy, user_choice, debug):
             for files in iterator["files"]:
                 to_read = f"{path}/{iterator['path']}/{files}"
                 query = iterator["query"].replace(", ", "|")
-                result_count = process_rule(
+                match_count += process_rule(
                     hostname, user_choice, rules, to_read, query
                 )
-                match_count += result_count
                 if debug:
                     logger.debug(
                         "Rule: %s,Source: %s,Query: %s,Result: %s",
                         rules,
                         to_read,
                         query,
-                        result_count,
+                        match_count,
                     )
             analysis_summary += f"{rules}: {match_count}\n"
         logger.critical(analysis_summary)
