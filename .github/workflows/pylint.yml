@@ -17,7 +17,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint inquirer
+        pip install pylint inquirer black
+    - name: Ensure consistent syntax with black formatting
+      run: |
+        black $(git ls-files '*.py')
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
