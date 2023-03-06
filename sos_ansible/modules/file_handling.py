@@ -18,13 +18,17 @@ config.setup()
 
 def read_policy(policy_name):
     """Read Rules File and returns its contents"""
-    with open(policy_name, "r", encoding="utf-8") as file:
-        try:
-            data = load(file)
-            return data
-        except decoder.JSONDecodeError as error:
-            logger.error(error)
-            sys.exit(f"Invalid json in {policy_name} file")
+    try:
+        with open(policy_name, "r", encoding="utf-8") as file:
+            try:
+                data = load(file)
+                return data
+            except decoder.JSONDecodeError as error:
+                logger.error(error)
+                sys.exit(f"Invalid json in {policy_name} file")
+    except FileNotFoundError as error:
+        logger.error(error)
+        sys.exit(f"File {policy_name} does not exist. Please set another rules file.")
 
 
 def validate_tgt_dir(directory):
@@ -66,6 +70,7 @@ def create_dir(directory, hostname):
 def create_output(final_directory, rules, data):
     """Create the output data for each rule processed"""
     out_file = rules.replace(" ", "_")
+    logging.info("Populating file %s/%s", final_directory, out_file)
     with open(f"{final_directory}/{out_file}", "a", encoding="utf-8") as file:
         for lines in data:
             file.write(lines)

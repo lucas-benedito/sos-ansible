@@ -16,7 +16,6 @@ class ConfigParser:
         self.home_dir = Path.home()
         self.config_handler = configparser.ConfigParser()
         self.config_file = Path.joinpath(self.home_dir, ".sos_ansible.ini")
-        print("Initiated")
 
     def setup(self):
         """Setting up config files"""
@@ -24,7 +23,6 @@ class ConfigParser:
             self.config_handler.read(self.config_file)
         else:
             self.set_config()
-        print("Setup")
 
     def set_config(self):
         """Load config for the loggers"""

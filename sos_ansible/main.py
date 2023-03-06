@@ -97,11 +97,11 @@ def main():
     if params.directory:
         sos_directory = params.directory
     else:
-        sos_directory = os.path.abspath(config.get("files", "source"))
+        sos_directory = os.path.abspath(config.config_handler.get("files", "source"))
     if params.rules:
         rules_file = os.path.abspath(params.rules)
     else:
-        rules_file = os.path.abspath(config.get("files", "rules"))
+        rules_file = os.path.abspath(config.config_handler.get("files", "rules"))
 
     logging.basicConfig(
         filename="sos-ansible.log",
