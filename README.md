@@ -35,10 +35,10 @@ $ head rules/rules.json
 
 ---
 ## Running the tool and checking the logs [WIP]
-Generate your report by running the sos-ansible main.py code providing the sosreport and rules args.
+Generate your report by running the sos_ansible main.py code providing the sosreport and rules args.
 ```
 $ /tmp/git/sos-ansible
-$ python sos-ansible/main.py -d /tmp/test_sosreport -r rules/rules.json
+$ python sos_ansible/main.py -d /tmp/test_sosreport -r rules/rules.json
 [?] Choose the sos directory: 9999999
  > 9999999
 
