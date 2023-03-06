@@ -91,7 +91,8 @@ def main():
     params = parser.parse_args()
 
     config = ConfigParser()
-    validator(config)
+    config.setup()
+    validator(config.config_handler)
 
     if params.directory:
         sos_directory = params.directory

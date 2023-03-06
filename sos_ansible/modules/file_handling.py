@@ -11,7 +11,9 @@ from shutil import rmtree
 from modules.config_manager import ConfigParser
 
 logger = logging.getLogger(__name__)
-config = ConfigParser().load_config()
+
+config = ConfigParser()
+config.setup()
 
 
 def read_policy(policy_name):
@@ -27,7 +29,7 @@ def read_policy(policy_name):
 
 def validate_tgt_dir(directory):
     """Validate if Target Directory exists"""
-    case_dir = os.path.join(config.get("files", "target"), directory)
+    case_dir = os.path.join(config.config_handler.get("files", "target"), directory)
     if os.path.isdir(case_dir):
         logging.info(
             "The target directory %s exists. ",
@@ -42,14 +44,16 @@ def validate_tgt_dir(directory):
 
 def create_dir(directory, hostname):
     """Create a directory"""
-    case_dir = os.path.join(config.get("files", "target"), directory)
+    case_dir = os.path.join(config.config_handler.get("files", "target"), directory)
     try:
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
     except OSError as error:
         logging.error(error)
         sys.exit(f"Failure while creating {case_dir}: {error}")
-    final_directory = os.path.join(config.get("files", "target"), directory, hostname)
+    final_directory = os.path.join(
+        config.config_handler.get("files", "target"), directory, hostname
+    )
     try:
         if not os.path.isdir(final_directory):
             os.mkdir(final_directory)
