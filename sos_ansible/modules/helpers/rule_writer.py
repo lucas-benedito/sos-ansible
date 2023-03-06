@@ -4,7 +4,7 @@ Utility to create json rules file
 
 import logging
 import inquirer
-from sos_ansible.modules.helpers.write_json import create_json
+from modules.helpers.write_json import create_json
 
 logger = logging.getLogger(__name__)
 

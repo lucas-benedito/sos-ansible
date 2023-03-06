@@ -5,6 +5,7 @@ Common functions for helpers
 import os
 import json
 
+
 def create_json(file_path, rule_data):
     """File handling"""
     if os.path.exists(file_path):
