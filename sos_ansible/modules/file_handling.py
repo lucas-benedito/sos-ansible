@@ -4,16 +4,19 @@ Provide all file handling functions
 
 from json import load, decoder
 import os
-import logging
 import sys
 import re
+import logging.config as loggerconf
+from logging import getLogger
 from shutil import rmtree
 from modules.config_manager import ConfigParser
 
-logger = logging.getLogger(__name__)
 
 config = ConfigParser()
 config.setup()
+
+loggerconf.fileConfig(config.config_file)
+logger = getLogger(__name__)
 
 
 def read_policy(policy_name):
@@ -35,9 +38,9 @@ def validate_tgt_dir(directory):
     """Validate if Target Directory exists"""
     case_dir = os.path.join(config.config_handler.get("files", "target"), directory)
     if os.path.isdir(case_dir):
-        logging.info(
-            "The target directory %s exists. ",
-            case_dir + "Removing it before running the script.",
+        logger.info(
+            "The target directory %s exists. Removing it before running the script.",
+            case_dir,
         )
         try:
             rmtree(case_dir)
@@ -53,7 +56,7 @@ def create_dir(directory, hostname):
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
     except OSError as error:
-        logging.error(error)
+        logger.error(error)
         sys.exit(f"Failure while creating {case_dir}: {error}")
     final_directory = os.path.join(
         config.config_handler.get("files", "target"), directory, hostname
@@ -62,7 +65,7 @@ def create_dir(directory, hostname):
         if not os.path.isdir(final_directory):
             os.mkdir(final_directory)
     except OSError as error:
-        logging.error(error)
+        logger.error(error)
         sys.exit(f"Failure while creating {final_directory}: {error}")
     return final_directory
 
@@ -70,7 +73,7 @@ def create_dir(directory, hostname):
 def create_output(final_directory, rules, data):
     """Create the output data for each rule processed"""
     out_file = rules.replace(" ", "_")
-    logging.info("Populating file %s/%s", final_directory, out_file)
+    logger.info("Populating file %s/%s", final_directory, out_file)
     with open(f"{final_directory}/{out_file}", "a", encoding="utf-8") as file:
         for lines in data:
             file.write(lines)
@@ -100,7 +103,7 @@ def process_rule(hostname, tgt_dir, rules, file_name, query):
                 except Exception as error:  # pylint: disable=broad-except
                     logger.error(error)
     else:
-        logging.warning("Skipping %s. Path does not exist.", file_name)
+        logger.warning("Skipping %s. Path does not exist.", file_name)
 
     if data:
         final_directory = create_dir(tgt_dir, hostname)
