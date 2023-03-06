@@ -20,4 +20,4 @@ jobs:
         pip install pylint inquirer
     - name: Analysing the code with pylint
       run: |
-        pylint --init-hook='import sys; sys.path.append("./sos_ansible")' $(git ls-files './sos-ansible/*.py')
+        pylint $(git ls-files './sos-ansible/*.py')
