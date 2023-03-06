@@ -4,8 +4,7 @@ Utility to create json rules file
 
 import logging
 import inquirer
-import os
-import json
+from sos_ansible.modules.helpers.write_json import create_json
 
 logger = logging.getLogger(__name__)
 
@@ -31,15 +30,7 @@ def get_user_inputs():
             "query": prompted_answers["query"],
         }
     }
-    if os.path.exists(FILE_PATH):
-        with open(FILE_PATH, "r", encoding="utf-8") as file:
-            data = json.load(file)
-            data.update(rule_data)
-        with open(FILE_PATH, "w", encoding="utf-8") as file:
-            file.write(json.dumps(data, indent=4))
-    else:
-        with open(FILE_PATH, "w", encoding="utf-8") as file:
-            file.write(json.dumps(rule_data, indent=4))
+    create_json(FILE_PATH, rule_data)
     question = [inquirer.Text("go_again", message="Add another rule (True or False)? ")]
     go_again = inquirer.prompt(question)
     if go_again["go_again"].lower() == "true":

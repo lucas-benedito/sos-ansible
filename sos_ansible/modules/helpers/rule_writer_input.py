@@ -1,7 +1,6 @@
 """ Helper utility to create an ad-hoc rules file"""
 
-import json
-import os
+from sos_ansible.modules.helpers.write_json import create_json
 
 FILE_PATH = "rules/rules.json"
 
@@ -20,15 +19,7 @@ example: foo.log, bar.log, new.log
     rule_data = {
         rule_name: {"files": list(files), "path": path, "query": query},
     }
-    if os.path.exists(FILE_PATH):
-        with open(FILE_PATH, "r", encoding="utf-8") as file:
-            data = json.load(file)
-            data.update(rule_data)
-        with open(FILE_PATH, "w", encoding="utf-8") as file:
-            file.write(json.dumps(data, indent=4))
-    else:
-        with open(FILE_PATH, "w", encoding="utf-8") as file:
-            file.write(json.dumps(rule_data, indent=4))
+    create_json(FILE_PATH, rule_data)
     go_again = input("Add another entry(True or False)? ")
     if go_again.lower() == "true":
         get_user_inputs()

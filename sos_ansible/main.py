@@ -8,8 +8,8 @@ import logging
 import os
 import sys
 import inquirer
-from modules.file_handling import read_policy, process_rule, validate_tgt_dir
-from modules.locating_sos import LocateReports
+from sos_ansible.modules.file_handling import read_policy,process_rule,validate_tgt_dir
+from sos_ansible.modules.locating_sos import LocateReports
 
 SOS_DIRECTORY = os.path.abspath("/tmp/test_sosreport/")
 RULES_FILE = os.path.abspath("/tmp/rules/rules.json")
@@ -40,10 +40,13 @@ def rules_processing(node_data, curr_policy, user_choice):
     """
     Read the rules.json file and load it on the file_handling modules for processing.
     """
+    div = "\n--------\n"
     for hosts in node_data:
         hostname = hosts["hostname"]
         path = hosts["path"]
-        analysis_summary = f"Summary\n{hostname}:\n--------\nController Node: {hosts['controller']}\n--------\n"
+        analysis_summary = (
+            f"Summary\n{hostname}:{div}Controller Node: {hosts['controller']}{div}"
+        )
         match_count = int()
         logging.info("Processing node %s:", hostname)
         for rules in curr_policy:
@@ -107,7 +110,7 @@ def main():
     console.setLevel(logging.CRITICAL)
     logging.getLogger("").addHandler(console)
 
-    #In order to allow both container and standard command line usage must check for env
+    # In order to allow both container and standard command line usage must check for env
     try:
         if os.environ["IS_CONTAINER"]:
             if not params.case:
