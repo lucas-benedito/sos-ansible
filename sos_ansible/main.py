@@ -90,7 +90,7 @@ def main():
     )
     params = parser.parse_args()
 
-    config = ConfigParser().load_config()
+    config = ConfigParser()
     validator(config)
 
     if params.directory:
