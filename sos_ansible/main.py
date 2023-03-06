@@ -47,9 +47,9 @@ def rules_processing(node_data, curr_policy, user_choice):
         analysis_summary = (
             f"Summary\n{hostname}:{div}Controller Node: {hosts['controller']}{div}"
         )
-        match_count = int()
         logging.info("Processing node %s:", hostname)
         for rules in curr_policy:
+            match_count = int()
             iterator = curr_policy[rules]
             for files in iterator["files"]:
                 to_read = f"{path}/{iterator['path']}/{files}"
