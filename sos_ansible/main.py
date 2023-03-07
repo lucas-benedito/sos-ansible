@@ -4,13 +4,22 @@ sos_ansible, main program
 """
 
 import argparse
-import logging
 import os
 import sys
+import logging.config as loggerconf
+from logging import getLogger
 import inquirer
 from modules.file_handling import read_policy, process_rule, validate_tgt_dir
 from modules.locating_sos import LocateReports
 from modules.config_manager import ConfigParser, validator
+
+
+config = ConfigParser()
+config.setup()
+validator(config.config_handler)
+
+loggerconf.fileConfig(config.config_file)
+logger = getLogger(__name__)
 
 
 def get_user_input(sos_directory):
@@ -26,15 +35,15 @@ def data_input(sos_directory, rules_file, user_choice):
     """
     Load the external sosreport and policy rules
     """
-    logging.info("Validating sosreports on target directory: %s", sos_directory)
+    logger.info("Validating sosreports on target directory: %s", sos_directory)
     report_data = LocateReports()
     node_data = report_data.run({sos_directory}, user_choice)
-    logging.info("Validating rules in place: %s", rules_file)
+    logger.info("Validating rules in place: %s", rules_file)
     curr_policy = read_policy(rules_file)
     return node_data, curr_policy
 
 
-def rules_processing(node_data, curr_policy, user_choice):
+def rules_processing(node_data, curr_policy, user_choice, debug):
     """
     Read the rules.json file and load it on the file_handling modules for processing.
     """
@@ -45,19 +54,26 @@ def rules_processing(node_data, curr_policy, user_choice):
         analysis_summary = (
             f"Summary\n{hostname}:{div}Controller Node: {hosts['controller']}{div}"
         )
-        logging.info("Processing node %s:", hostname)
+        logger.info("Processing node %s:", hostname)
         for rules in curr_policy:
             match_count = int()
             iterator = curr_policy[rules]
             for files in iterator["files"]:
                 to_read = f"{path}/{iterator['path']}/{files}"
                 query = iterator["query"].replace(", ", "|")
-                result_count = process_rule(
+                match_count += process_rule(
                     hostname, user_choice, rules, to_read, query
                 )
-                match_count += result_count
+                if debug:
+                    logger.debug(
+                        "Rule: %s,Source: %s,Query: %s,Result: %s",
+                        rules,
+                        to_read,
+                        query,
+                        match_count,
+                    )
             analysis_summary += f"{rules}: {match_count}\n"
-        logging.critical(analysis_summary)
+        logger.critical(analysis_summary)
 
 
 def main():
@@ -88,11 +104,14 @@ def main():
         help="Directory number to which the sosreport was extracted",
         required=False,
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug message logging",
+        required=False,
+        default=False,
+    )
     params = parser.parse_args()
-
-    config = ConfigParser()
-    config.setup()
-    validator(config.config_handler)
 
     if params.directory:
         sos_directory = params.directory
@@ -103,21 +122,11 @@ def main():
     else:
         rules_file = os.path.abspath(config.config_handler.get("files", "rules"))
 
-    logging.basicConfig(
-        filename="sos-ansible.log",
-        format="%(levelname)s:%(message)s",
-        level=logging.DEBUG,
-    )
-
-    console = logging.StreamHandler()
-    console.setLevel(logging.CRITICAL)
-    logging.getLogger("").addHandler(console)
-
     # In order to allow both container and standard command line usage must check for env
     try:
         if os.environ["IS_CONTAINER"]:
             if not params.case:
-                logging.error("A case number must be used if running from a container")
+                logger.error("A case number must be used if running from a container")
                 sys.exit("A case number must be used if running from a container")
     except KeyError:
         pass
@@ -127,7 +136,7 @@ def main():
     elif os.path.isdir(sos_directory) and params.case:
         user_choice = params.case
     else:
-        logging.error(
+        logger.error(
             "The selected directory %s doesn't exist."
             "Select a new directory and try again.",
             sos_directory,
@@ -136,12 +145,15 @@ def main():
     validate_tgt_dir(user_choice)
     node_data, curr_policy = data_input(sos_directory, rules_file, user_choice)
     if not node_data:
-        logging.error(
+        logger.error(
             "No sosreports found, please review the directory %s", sos_directory
         )
         sys.exit(1)
-    logging.info(node_data)
-    rules_processing(node_data, curr_policy, user_choice)
+    logger.info("Node data: %s", node_data)
+    if params.debug:
+        logger.debug("Current policy: %s", curr_policy)
+    rules_processing(node_data, curr_policy, user_choice, params.debug)
+    logger.info("sos-ansible finished.")
 
 
 if __name__ == "__main__":

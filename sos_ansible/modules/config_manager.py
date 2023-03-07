@@ -63,7 +63,6 @@ class ConfigParser:
                 "formatter_sos_ansible", "format", "%(levelname)s:%(message)s"
             )
             self.config_handler.set("formatter_sos_ansible", "datefmt", "")
-            self.config_handler.set("formatter_sos_ansible", "style", "%%")
             self.config_handler.set("formatter_sos_ansible", "validate", "True")
             self.config_handler.set(
                 "formatter_sos_ansible", "class", "logging.Formatter"
@@ -75,7 +74,6 @@ class ConfigParser:
                 "%(asctime)s %(levelname)s %(message)s",
             )
             self.config_handler.set("formatter_sos_ansible_asctime", "datefmt", "")
-            self.config_handler.set("formatter_sos_ansible_asctime", "style", "%%")
             self.config_handler.set("formatter_sos_ansible_asctime", "validate", "True")
             self.config_handler.set(
                 "formatter_sos_ansible_asctime", "class", "logging.Formatter"
