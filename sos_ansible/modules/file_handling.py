@@ -36,7 +36,8 @@ def read_policy(policy_name):
 
 def validate_tgt_dir(directory):
     """Validate if Target Directory exists"""
-    case_dir = os.path.join(config.config_handler.get("files", "target"), directory)
+    tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
+    case_dir = os.path.join(tgt_dir, directory)
     if os.path.isdir(case_dir):
         logger.info(
             "The target directory %s exists. Removing it before running the script.",
@@ -51,16 +52,15 @@ def validate_tgt_dir(directory):
 
 def create_dir(directory, hostname):
     """Create a directory"""
-    case_dir = os.path.join(config.config_handler.get("files", "target"), directory)
+    tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
+    case_dir = os.path.join(tgt_dir, directory)
     try:
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
     except OSError as error:
         logger.error(error)
         sys.exit(f"Failure while creating {case_dir}: {error}")
-    final_directory = os.path.join(
-        config.config_handler.get("files", "target"), directory, hostname
-    )
+    final_directory = os.path.join(tgt_dir, directory, hostname)
     try:
         if not os.path.isdir(final_directory):
             os.mkdir(final_directory)
