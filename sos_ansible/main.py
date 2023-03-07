@@ -122,11 +122,6 @@ def main():
     else:
         rules_file = os.path.expanduser(config.config_handler.get("files", "rules"))
 
-    logger.info(
-        sos_directory,
-        rules_file,
-        os.path.expanduser(config.config_handler.get("files", "target")),
-    )
     # In order to allow both container and standard command line usage must check for env
     try:
         if os.environ["IS_CONTAINER"]:
