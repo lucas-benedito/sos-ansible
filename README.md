@@ -107,10 +107,24 @@ $ cat Filesystem
 
 An alternative to running this on cli directly is to use the container version:
 
-Currently the image must be built locally using the following:
+Running the app with docker-compose
+```
+docker-compose run backend bash
+```
+
+Using prebuilt images:
+Interactive image:
+```
+docker push quay.io/lucas_benedito/sos-ansible-debug
+```
+App image:
+```
+docker push quay.io/lucas_benedito/sos-ansible
+```
+
+You may build locally using the following:
 
 from the sos-ansible directory
-
 ```
 docker build -t sos-ansible:0.0.1 .
 ``` 
