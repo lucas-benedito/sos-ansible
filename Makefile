@@ -6,8 +6,8 @@ test:
 	pytest tests
 
 build:
-	docker build -f Dockerfiledebug -t quay.io/lucas_benedito/sos-ansible-debug:latest .
+	docker build -f DockerfileDebug -t quay.io/lucas_benedito/sos-ansible-debug:latest .
 	docker build -f Dockerfile -t quay.io/lucas_benedito/sos-ansible:latest .
-	
+
 clean:
 	rm -rf __pycache__
