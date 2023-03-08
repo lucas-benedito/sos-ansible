@@ -35,7 +35,7 @@ def data_input(sos_directory, rules_file, user_choice):
     """
     Load the external sosreport and policy rules
     """
-    logger.info("Validating sosreports on target directory: %s", sos_directory)
+    logger.info("Validating sosreports at the source directory: %s", sos_directory)
     report_data = LocateReports()
     node_data = report_data.run({sos_directory}, user_choice)
     logger.info("Validating rules in place: %s", rules_file)
@@ -116,11 +116,11 @@ def main():
     if params.directory:
         sos_directory = params.directory
     else:
-        sos_directory = os.path.abspath(config.config_handler.get("files", "source"))
+        sos_directory = os.path.expanduser(config.config_handler.get("files", "source"))
     if params.rules:
-        rules_file = os.path.abspath(params.rules)
+        rules_file = os.path.expanduser(params.rules)
     else:
-        rules_file = os.path.abspath(config.config_handler.get("files", "rules"))
+        rules_file = os.path.expanduser(config.config_handler.get("files", "rules"))
 
     # In order to allow both container and standard command line usage must check for env
     try:
