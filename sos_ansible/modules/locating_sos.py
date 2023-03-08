@@ -6,6 +6,16 @@ https://github.com/chrismeyersfsu/sosreport-elk
 import glob
 import os
 import re
+import logging.config as loggerconf
+from logging import getLogger
+
+from modules.config_manager import ConfigParser
+
+config = ConfigParser()
+config.setup()
+
+loggerconf.fileConfig(config.config_file)
+logger = getLogger("root")
 
 
 class LocateReports:
@@ -48,8 +58,12 @@ class LocateReports:
         # lookups in general are expected to both take a list as input and output a list
         # this is done so they work with the looping construct 'with_'.
         ret = []
-        for sos_directory in terms:
+        if not isinstance(terms, list):
+            dirs_handler = []
+            dirs_handler.append(terms)
+        for sos_directory in dirs_handler:
             sos_dir = os.path.abspath(sos_directory)
+            logger.error(sos_dir)
             try:
                 with open("/tmp/outme", "w", encoding="utf-8") as file:
                     for directory in glob.glob(

@@ -28,7 +28,7 @@ class ConfigParser:
         """Load config for the loggers"""
         try:
             self.config_handler.add_section("files")
-            self.config_handler.set("files", "source", "/tmp/sosreports/")
+            self.config_handler.set("files", "source", "/tmp/sosreports")
             self.config_handler.set("files", "target", "/tmp")
             self.config_handler.set("files", "rules", "/tmp/rules.json")
         except configparser.DuplicateSectionError:
@@ -59,9 +59,7 @@ class ConfigParser:
             self.config_handler.set("handler_file", "formatter", "sos_ansible_asctime")
             self.config_handler.set("handler_file", "args", "('sos-ansible.log', 'a')")
             self.config_handler.add_section("formatter_sos_ansible")
-            self.config_handler.set(
-                "formatter_sos_ansible", "format", "%(levelname)s:%(message)s"
-            )
+            self.config_handler.set("formatter_sos_ansible", "format", "%(message)s")
             self.config_handler.set("formatter_sos_ansible", "datefmt", "")
             self.config_handler.set("formatter_sos_ansible", "validate", "True")
             self.config_handler.set(

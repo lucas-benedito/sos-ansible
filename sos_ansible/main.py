@@ -19,7 +19,7 @@ config.setup()
 validator(config.config_handler)
 
 loggerconf.fileConfig(config.config_file)
-logger = getLogger(__name__)
+logger = getLogger("root")
 
 
 def get_user_input(sos_directory):
@@ -35,10 +35,10 @@ def data_input(sos_directory, rules_file, user_choice):
     """
     Load the external sosreport and policy rules
     """
-    logger.info("Validating sosreports at the source directory: %s", sos_directory)
+    logger.critical("Validating sosreports at the source directory: %s", sos_directory)
     report_data = LocateReports()
-    node_data = report_data.run({sos_directory}, user_choice)
-    logger.info("Validating rules in place: %s", rules_file)
+    node_data = report_data.run(sos_directory, user_choice)
+    logger.critical("Validating rules in place: %s", rules_file)
     curr_policy = read_policy(rules_file)
     return node_data, curr_policy
 
@@ -54,7 +54,7 @@ def rules_processing(node_data, curr_policy, user_choice, debug):
         analysis_summary = (
             f"Summary\n{hostname}:{div}Controller Node: {hosts['controller']}{div}"
         )
-        logger.info("Processing node %s:", hostname)
+        logger.critical("Processing node %s:", hostname)
         for rules in curr_policy:
             match_count = int()
             iterator = curr_policy[rules]
@@ -66,11 +66,11 @@ def rules_processing(node_data, curr_policy, user_choice, debug):
                 )
                 if debug:
                     logger.debug(
-                        "Rule: %s,Source: %s,Query: %s,Result: %s",
+                        "Rule: %s, Result: %s, Query: %s, Source: %s",
                         rules,
-                        to_read,
-                        query,
                         match_count,
+                        query,
+                        to_read,
                     )
             analysis_summary += f"{rules}: {match_count}\n"
         logger.critical(analysis_summary)
@@ -114,9 +114,11 @@ def main():
     params = parser.parse_args()
 
     if params.directory:
-        sos_directory = params.directory
+        sos_directory = os.path.abspath(params.directory)
     else:
-        sos_directory = os.path.expanduser(config.config_handler.get("files", "source"))
+        sos_directory = os.path.abspath(
+            os.path.expanduser(config.config_handler.get("files", "source"))
+        )
     if params.rules:
         rules_file = os.path.expanduser(params.rules)
     else:
@@ -149,11 +151,16 @@ def main():
             "No sosreports found, please review the directory %s", sos_directory
         )
         sys.exit(1)
-    logger.info("Node data: %s", node_data)
+    logger.debug("Node data: %s", node_data)
     if params.debug:
         logger.debug("Current policy: %s", curr_policy)
     rules_processing(node_data, curr_policy, user_choice, params.debug)
-    logger.info("sos-ansible finished.")
+    logger.critical(
+        "Read the matches at %s/%s",
+        config.config_handler.get("files", "target"),
+        user_choice,
+    )
+    logger.critical("sos-ansible finished.")
 
 
 if __name__ == "__main__":
