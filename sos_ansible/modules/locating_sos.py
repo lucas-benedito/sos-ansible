@@ -58,8 +58,12 @@ class LocateReports:
         # lookups in general are expected to both take a list as input and output a list
         # this is done so they work with the looping construct 'with_'.
         ret = []
-        for sos_directory in terms:
+        if not isinstance(terms, list):
+            dirs_handler = []
+            dirs_handler.append(terms)
+        for sos_directory in dirs_handler:
             sos_dir = os.path.abspath(sos_directory)
+            logger.error(sos_dir)
             try:
                 with open("/tmp/outme", "w", encoding="utf-8") as file:
                     for directory in glob.glob(

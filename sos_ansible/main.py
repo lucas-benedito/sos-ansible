@@ -114,9 +114,11 @@ def main():
     params = parser.parse_args()
 
     if params.directory:
-        sos_directory = params.directory
+        sos_directory = os.path.abspath(params.directory)
     else:
-        sos_directory = os.path.expanduser(config.config_handler.get("files", "source"))
+        sos_directory = os.path.abspath(
+            os.path.expanduser(config.config_handler.get("files", "source"))
+        )
     if params.rules:
         rules_file = os.path.expanduser(params.rules)
     else:
