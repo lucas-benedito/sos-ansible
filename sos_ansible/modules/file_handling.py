@@ -35,8 +35,9 @@ def validate_tgt_dir(directory):
     """Validate if Target Directory exists"""
     tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
     case_dir = os.path.join(tgt_dir, directory)
+    logger.debug("Target Directory: %s, Case Directory: %s", tgt_dir, case_dir)
     if os.path.isdir(case_dir):
-        logger.info(
+        logger.warning(
             "The target directory %s exists. Removing it before running the script.",
             case_dir,
         )
