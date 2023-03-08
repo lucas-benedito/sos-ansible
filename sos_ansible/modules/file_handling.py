@@ -6,17 +6,14 @@ from json import load, decoder
 import os
 import sys
 import re
-import logging.config as loggerconf
 from logging import getLogger
 from shutil import rmtree
 from modules.config_manager import ConfigParser
 
-
 config = ConfigParser()
 config.setup()
 
-loggerconf.fileConfig(config.config_file)
-logger = getLogger(__name__)
+logger = getLogger("root")
 
 
 def read_policy(policy_name):

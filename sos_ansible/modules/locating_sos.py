@@ -6,6 +6,16 @@ https://github.com/chrismeyersfsu/sosreport-elk
 import glob
 import os
 import re
+import logging.config as loggerconf
+from logging import getLogger
+
+from modules.config_manager import ConfigParser
+
+config = ConfigParser()
+config.setup()
+
+loggerconf.fileConfig(config.config_file)
+logger = getLogger("root")
 
 
 class LocateReports:
