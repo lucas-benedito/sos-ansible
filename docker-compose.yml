@@ -1,0 +1,9 @@
+version: '1'
+services:
+  backend:
+    image: quay.io/lucas_benedito/sos-ansible-debug
+    command: bash
+    volumes:
+      - /tmp:/tmp
+      - ./rules/rules.json:/tmp/rules.json
+      - ./sos-ansible.log:/home/ansible/sos-ansible.log
