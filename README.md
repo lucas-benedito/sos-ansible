@@ -115,11 +115,11 @@ docker-compose run backend bash
 Using prebuilt images:
 Interactive image:
 ```
-docker push quay.io/lucas_benedito/sos-ansible-debug
+docker pull quay.io/lucas_benedito/sos-ansible-debug
 ```
 App image:
 ```
-docker push quay.io/lucas_benedito/sos-ansible
+docker pull quay.io/lucas_benedito/sos-ansible
 ```
 
 You may build locally using the following:
