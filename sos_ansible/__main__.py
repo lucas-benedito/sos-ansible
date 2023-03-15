@@ -9,9 +9,13 @@ import sys
 import logging.config as loggerconf
 from logging import getLogger
 import inquirer
-from modules.file_handling import read_policy, process_rule, validate_tgt_dir
-from modules.locating_sos import LocateReports
-from modules.config_manager import ConfigParser, validator
+from sos_ansible.modules.file_handling import (
+    read_policy,
+    process_rule,
+    validate_tgt_dir,
+)
+from sos_ansible.modules.locating_sos import LocateReports
+from sos_ansible.modules.config_manager import ConfigParser, validator
 
 
 config = ConfigParser()
