@@ -9,7 +9,7 @@ import re
 import logging.config as loggerconf
 from logging import getLogger
 
-from modules.config_manager import ConfigParser
+from sos_ansible.modules.config_manager import ConfigParser
 
 config = ConfigParser()
 config.setup()

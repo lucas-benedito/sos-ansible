@@ -1,6 +1,6 @@
 """ Helper utility to create an ad-hoc rules file"""
 
-from modules.helpers.write_json import create_json
+from sos_ansible.modules.helpers.write_json import create_json
 
 FILE_PATH = "rules/rules.json"
 

@@ -8,7 +8,7 @@ import sys
 import re
 from logging import getLogger
 from shutil import rmtree
-from modules.config_manager import ConfigParser
+from sos_ansible.modules.config_manager import ConfigParser
 
 config = ConfigParser()
 config.setup()
@@ -24,11 +24,11 @@ def read_policy(policy_name):
                 data = load(file)
                 return data
             except decoder.JSONDecodeError as error:
-                logger.error(error)
-                sys.exit(f"Invalid json in {policy_name} file")
+                logger.error(f"Invalid json in {policy_name} file.\n {error}")
+                sys.exit(1)
     except FileNotFoundError as error:
-        logger.error(error)
-        sys.exit(f"File {policy_name} does not exist. Please set another rules file.")
+        logger.error(f"File {policy_name} does not exist. Please set another rules file.\n {error}")
+        sys.exit(1)
 
 
 def validate_tgt_dir(directory):
@@ -37,15 +37,15 @@ def validate_tgt_dir(directory):
     case_dir = os.path.join(tgt_dir, directory)
     logger.debug("Target Directory: %s, Case Directory: %s", tgt_dir, case_dir)
     if os.path.isdir(case_dir):
-        logger.warning(
+        logger.info(
             "The target directory %s exists. Removing it before running the script.",
             case_dir,
         )
         try:
             rmtree(case_dir)
         except Exception as error:  # pylint: disable=broad-except
-            logger.error(error)
-            sys.exit(f"Failure while creating {case_dir}: {error}")
+            logger.error(f"Failure while creating {case_dir}: {error}")
+            sys.exit(1)
 
 
 def create_dir(directory, hostname):
@@ -56,15 +56,15 @@ def create_dir(directory, hostname):
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
     except OSError as error:
-        logger.error(error)
-        sys.exit(f"Failure while creating {case_dir}: {error}")
+        logger.error(f"Failure while creating {case_dir}: {error}")
+        sys.exit(1)
     final_directory = os.path.join(tgt_dir, directory, hostname)
     try:
         if not os.path.isdir(final_directory):
             os.mkdir(final_directory)
     except OSError as error:
-        logger.error(error)
-        sys.exit(f"Failure while creating {final_directory}: {error}")
+        logger.error(f"Failure while creating {final_directory}: {error}")
+        sys.exit(1)
     return final_directory
 
 
@@ -101,7 +101,7 @@ def process_rule(hostname, tgt_dir, rules, file_name, query):
                 except Exception as error:  # pylint: disable=broad-except
                     logger.error(error)
     else:
-        logger.warning("Skipping %s. Path does not exist.", file_name)
+        logger.info("Skipping %s. Path does not exist.", file_name)
 
     if data:
         final_directory = create_dir(tgt_dir, hostname)

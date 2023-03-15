@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sos_ansible"
+version = "1.0.0"
+authors = [
+    {name = "Lucas Benedito", email = "lbenedit@redhat.com"},
+]
+description = "A sosreport parser for ansible"
+requires-python = ">=3.9"
+license = {text = "GPL-3.0 license"}
+dependencies = [
+    "inquirer",
+]
+readme = "README.md"
+
+[tool.setuptools]
+packages = ["sos_ansible"]
+
+[project.optional-dependencies]
+dev = ["black", "pylint", "pytest", "pip-tools"]
+
+[project.scripts]
+sos_ansible = "sos_ansible.__main__:main"
