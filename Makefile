@@ -11,4 +11,4 @@ build:
 	docker build -f Dockerfile -t quay.io/lucas_benedito/sos-ansible:latest .
 
 clean:
-	rm -rf __pycache__
+	rm -rf __pycache__ sos_ansible.egg-info
