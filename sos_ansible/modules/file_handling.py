@@ -24,10 +24,14 @@ def read_policy(policy_name):
                 data = load(file)
                 return data
             except decoder.JSONDecodeError as error:
-                logger.error(f"Invalid json in {policy_name} file.\n {error}")
+                logger.error("Invalid json in %s} file.\n %s", policy_name, error)
                 sys.exit(1)
     except FileNotFoundError as error:
-        logger.error(f"File {policy_name} does not exist. Please set another rules file.\n {error}")
+        logger.error(
+            "File %s does not exist. Please set another rules file.\n %s",
+            policy_name,
+            error,
+        )
         sys.exit(1)
 
 
@@ -44,7 +48,7 @@ def validate_tgt_dir(directory):
         try:
             rmtree(case_dir)
         except Exception as error:  # pylint: disable=broad-except
-            logger.error(f"Failure while creating {case_dir}: {error}")
+            logger.error("Failure while creating %s : %s", case_dir, error)
             sys.exit(1)
 
 
@@ -56,14 +60,14 @@ def create_dir(directory, hostname):
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
     except OSError as error:
-        logger.error(f"Failure while creating {case_dir}: {error}")
+        logger.error("Failure while creating %s : %s", case_dir, error)
         sys.exit(1)
     final_directory = os.path.join(tgt_dir, directory, hostname)
     try:
         if not os.path.isdir(final_directory):
             os.mkdir(final_directory)
     except OSError as error:
-        logger.error(f"Failure while creating {final_directory}: {error}")
+        logger.error("Failure while creating %s : %s", final_directory, error)
         sys.exit(1)
     return final_directory
 

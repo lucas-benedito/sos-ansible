@@ -1,61 +1,113 @@
 {
-    "Filesystem": {
-        "files": ["df"],
-        "path": "",
-        "query": "100%"
-    },
     "Tower Info": {
-        "files": ["awx-manage_--version","awx-manage_check_license_--data","awx-manage_run_wsbroadcast_--status","supervisorctl_status"],
+        "files": [
+            "awx-manage_--version",
+            "awx-manage_check_license_--data",
+            "awx-manage_run_wsbroadcast_--status",
+            "supervisorctl_status"
+        ],
         "path": "sos_commands/tower",
         "query": ""
     },
     "Instances Capacity": {
-        "files": ["awx-manage_list_instances"],
+        "files": [
+            "awx-manage_list_instances"
+        ],
         "path": "sos_commands/tower",
         "query": "capacity=0, controller="
     },
+    "Filesystem": {
+        "files": [
+            "df"
+        ],
+        "path": "",
+        "query": "100%"
+    },
+    "noexec": {
+        "files": [
+            "mount"
+        ],
+        "path": "",
+        "query": "noexec"
+    },
     "tower errors": {
-        "files": ["callback_receiver.log","dispatcher.log","job_lifecycle.log","management_playbooks.log","task_system.log","tower.log","tower_rbac_migrations.log","tower_system_tracking_migrations.log","wsbroadcast.log"],
+        "files": [
+            "callback_receiver.log",
+            "dispatcher.log",
+            "job_lifecycle.log",
+            "management_playbooks.log",
+            "task_system.log",
+            "tower.log",
+            "tower_rbac_migrations.log",
+            "tower_system_tracking_migrations.log",
+            "wsbroadcast.log"
+        ],
         "path": "var/log/tower",
         "query": "error"
     },
     "OOM": {
-        "files": ["dmesg"],
+        "files": [
+            "dmesg"
+        ],
         "path": "sos_commands/kernel/",
         "query": "OOM"
     },
     "Antivirus": {
-        "files": ["installed-rpms"],
+        "files": [
+            "installed-rpms"
+        ],
         "path": "",
         "query": "falcon, crowd"
     },
     "Installed Packages": {
-        "files": ["installed-rpms"],
+        "files": [
+            "installed-rpms"
+        ],
         "path": "",
         "query": "ansible, automation, receptor, hub, keycloak"
     },
     "Running Processes": {
-        "files": ["ps"],
+        "files": [
+            "ps"
+        ],
         "path": "",
         "query": "awx, nginx, redis, receptor"
     },
     "Supervisor": {
-        "files": ["failure-event-handler.stderr.log","awx-rsyslog.log","awx-wsbroadcast.log","awx-callback-receiver.log","awx-dispatcher.log","supervisord.log","awx-daphne.log","awx-uwsgi.log"],
+        "files": [
+            "failure-event-handler.stderr.log",
+            "awx-rsyslog.log",
+            "awx-wsbroadcast.log",
+            "awx-callback-receiver.log",
+            "awx-dispatcher.log",
+            "supervisord.log",
+            "awx-daphne.log",
+            "awx-uwsgi.log"
+        ],
         "path": "var/log/supervisor",
         "query": "error"
     },
     "Nginx": {
-        "files": ["error.log","access.log","automationcontroller.error.log","automationcontroller.access.log"],
+        "files": [
+            "error.log",
+            "access.log",
+            "automationcontroller.error.log",
+            "automationcontroller.access.log"
+        ],
         "path": "var/log/nginx",
         "query": "error, 504, denied"
     },
     "Receptor": {
-        "files": ["receptor.log"],
+        "files": [
+            "receptor.log"
+        ],
         "path": "var/log/receptor",
         "query": "error"
     },
     "LDAP": {
-        "files": ["tower.log"],
+        "files": [
+            "tower.log"
+        ],
         "path": "var/log/tower",
         "query": "django_auth_ldap"
     }
