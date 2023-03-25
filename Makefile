@@ -7,8 +7,8 @@ test:
 	pytest tests
 
 build:
-	docker build -f DockerfileDebug -t quay.io/lucas_benedito/sos-ansible-debug:latest .
-	docker build -f Dockerfile -t quay.io/lucas_benedito/sos-ansible:latest .
+	docker build -f DockerfileDebug -t sos-ansible-debug:latest .
+	docker build -f Dockerfile -t sos-ansible:latest .
 
 clean:
 	rm -rf __pycache__ sos_ansible.egg-info
