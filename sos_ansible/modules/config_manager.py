@@ -50,7 +50,7 @@ class ConfigParser:
             self.config_handler.set("logger_root", "handlers", "console,file")
             self.config_handler.add_section("handler_console")
             self.config_handler.set("handler_console", "class", "StreamHandler")
-            self.config_handler.set("handler_console", "level", "INFO")
+            self.config_handler.set("handler_console", "level", "CRITICAL")
             self.config_handler.set("handler_console", "formatter", "sos_ansible")
             self.config_handler.set("handler_console", "args", "(sys.stdout,)")
             self.config_handler.add_section("handler_file")
