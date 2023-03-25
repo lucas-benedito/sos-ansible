@@ -9,6 +9,7 @@ import re
 from logging import getLogger
 from shutil import rmtree
 from sos_ansible.modules.config_manager import ConfigParser
+from sos_ansible.modules.locating_sos import LocateReports
 
 config = ConfigParser()
 config.setup()
@@ -35,7 +36,7 @@ def read_policy(policy_name):
         sys.exit(1)
 
 
-def validate_tgt_dir(directory):
+def validate_out_dir(directory):
     """Validate if Target Directory exists"""
     tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
     case_dir = os.path.join(tgt_dir, directory)
@@ -54,7 +55,9 @@ def validate_tgt_dir(directory):
 
 def create_dir(directory, hostname):
     """Create a directory"""
-    tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
+    tgt_dir = os.path.abspath(
+        os.path.expanduser(config.config_handler.get("files", "target"))
+    )
     case_dir = os.path.join(tgt_dir, directory)
     try:
         if not os.path.isdir(case_dir):
@@ -111,3 +114,48 @@ def process_rule(hostname, tgt_dir, rules, file_name, query):
         final_directory = create_dir(tgt_dir, hostname)
         create_output(final_directory, rules, data)
     return match_count
+
+
+def data_input(sos_directory, rules_file, user_choice):
+    """
+    Load the external sosreport and policy rules
+    """
+    logger.critical("Validating sosreports at the source directory: %s", sos_directory)
+    report_data = LocateReports()
+    node_data = report_data.run(sos_directory, user_choice)
+    logger.critical("Validating rules in place: %s", rules_file)
+    curr_policy = read_policy(rules_file)
+    return node_data, curr_policy
+
+
+def rules_processing(node_data, curr_policy, user_choice, debug):
+    """
+    Read the rules.json file and load it on the file_handling modules for processing.
+    """
+    div = "\n--------\n"
+    for hosts in node_data:
+        hostname = hosts["hostname"]
+        path = hosts["path"]
+        analysis_summary = (
+            f"Summary:\n\n{hostname}:{div}Controller Node: {hosts['controller']}{div}"
+        )
+        logger.critical("Processing node %s:", hostname)
+        for rules in curr_policy:
+            match_count = int()
+            iterator = curr_policy[rules]
+            for files in iterator["files"]:
+                to_read = f"{path}/{iterator['path']}/{files}"
+                query = iterator["query"].replace(", ", "|")
+                match_count += process_rule(
+                    hostname, user_choice, rules, to_read, query
+                )
+                if debug:
+                    logger.debug(
+                        "Rule: %s, Result: %s, Query: %s, Source: %s",
+                        rules,
+                        match_count,
+                        query,
+                        to_read,
+                    )
+            analysis_summary += f"{rules}: {match_count}\n"
+        logger.critical(analysis_summary)
