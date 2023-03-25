@@ -1,10 +1,10 @@
+[![GPL-3.0 license](https://img.shields.io/badge/license-GPL%20v3.0-brightgreen.svg)](https://github.com/lucas-benedito/sos-ansible/blob/devel/LICENSE)[![PyPI version](https://img.shields.io/pypi/v/sos_ansible.svg)](https://pypi.org/project/sos-ansible/)[![PR - Pylint Status](https://github.com/lucas-benedito/sos-ansible/actions/workflows/pylint.yml/badge.svg)](https://github.com/lucas-benedito/sos-ansible/actions/workflows/pylint.yml)[![Python Builds](https://github.com/lucas-benedito/sos-ansible/actions/workflows/python-publish.yml/badge.svg)](https://github.com/lucas-benedito/sos-ansible/actions/workflows/python-publish.yml)
+
 # sos-ansible
 
 This tool has the purpose of achieving easy sosreport reviewing based on custom rules.
 
-
-Table of Contents
-=================
+---
 
 * [Installation](#installation)
 * [Sosreport location and rules files](#sosreport-location-and-rules-files)

@@ -16,6 +16,10 @@ dependencies = [
 ]
 readme = "README.md"
 
+[project.urls]
+"Homepage" = "https://github.com/lucas-benedito/sos-ansible"
+"Bug Tracker" = "https://github.com/lucas-benedito/sos-ansible/issues"
+
 [tool.setuptools]
 packages = ["sos_ansible"]
 
