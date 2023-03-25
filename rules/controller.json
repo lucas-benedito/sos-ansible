@@ -1,14 +1,4 @@
 {
-    "Tower Info": {
-        "files": [
-            "awx-manage_--version",
-            "awx-manage_check_license_--data",
-            "awx-manage_run_wsbroadcast_--status",
-            "supervisorctl_status"
-        ],
-        "path": "sos_commands/tower",
-        "query": ""
-    },
     "Controller Info": {
         "files": [
             "awx-manage_--version",
@@ -19,18 +9,11 @@
         "path": "sos_commands/controller",
         "query": ""
     },
-    "Instances Capacity TOWER": {
+    "Instances Capacity": {
         "files": [
             "awx-manage_list_instances"
         ],
-        "path": "sos_commands/tower",
-        "query": "capacity=0, , \\["
-    },
-    "Instances Capacity CTRL": {
-        "files": [
-            "awx-manage_list_instances"
-        ],
-        "path": "sos_commands/tower",
+        "path": "sos_commands/controller",
         "query": "capacity=0, , \\["
     },
     "Filesystem": {
@@ -47,7 +30,7 @@
         "path": "",
         "query": "noexec"
     },
-    "Tower Errors": {
+    "tower errors": {
         "files": [
             "callback_receiver.log",
             "dispatcher.log",
@@ -61,21 +44,6 @@
         ],
         "path": "var/log/tower",
         "query": "error"
-    },
-    "Tower Traceback": {
-        "files": [
-            "callback_receiver.log",
-            "dispatcher.log",
-            "job_lifecycle.log",
-            "management_playbooks.log",
-            "task_system.log",
-            "tower.log",
-            "tower_rbac_migrations.log",
-            "tower_system_tracking_migrations.log",
-            "wsbroadcast.log"
-        ],
-        "path": "var/log/tower",
-        "query": "Traceback"
     },
     "OOM": {
         "files": [
@@ -96,7 +64,7 @@
             "installed-rpms"
         ],
         "path": "",
-        "query": "ansible, automation, receptor, hub, keycloak"
+        "query": "ansible, automation, receptor, postgres"
     },
     "Running Processes": {
         "files": [

@@ -1,0 +1,66 @@
+{
+    "Filesystem": {
+        "files": [
+            "df"
+        ],
+        "path": "",
+        "query": "100%"
+    },
+    "noexec": {
+        "files": [
+            "mount"
+        ],
+        "path": "",
+        "query": "noexec"
+    },
+    "Messages Errors": {
+        "files": [
+            "messages"
+        ],
+        "path": "var/log",
+        "query": "error, Traceback, cryptography"
+    },
+    "OOM": {
+        "files": [
+            "dmesg"
+        ],
+        "path": "sos_commands/kernel/",
+        "query": "OOM"
+    },
+    "Antivirus": {
+        "files": [
+            "installed-rpms"
+        ],
+        "path": "",
+        "query": "falcon, crowd"
+    },
+    "Installed Packages": {
+        "files": [
+            "installed-rpms"
+        ],
+        "path": "",
+        "query": "ansible, automation, receptor, hub, keycloak, postgres"
+    },
+    "Running Processes": {
+        "files": [
+            "ps"
+        ],
+        "path": "",
+        "query": "pulp, nginx"
+    },
+    "Nginx": {
+        "files": [
+            "error.log",
+            "access.log"
+        ],
+        "path": "var/log/nginx",
+        "query": "error, 504, denied"
+    },
+    "PIP Conflict": {
+        "files": [
+            "pip_list"
+        ],
+        "path": "sos_commands/python",
+        "query": "ansible"
+    }
+}

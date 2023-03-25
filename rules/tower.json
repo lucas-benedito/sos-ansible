@@ -9,29 +9,12 @@
         "path": "sos_commands/tower",
         "query": ""
     },
-    "Controller Info": {
-        "files": [
-            "awx-manage_--version",
-            "awx-manage_check_license_--data",
-            "awx-manage_run_wsbroadcast_--status",
-            "supervisorctl_status"
-        ],
-        "path": "sos_commands/controller",
-        "query": ""
-    },
-    "Instances Capacity TOWER": {
+    "Instances Capacity": {
         "files": [
             "awx-manage_list_instances"
         ],
         "path": "sos_commands/tower",
-        "query": "capacity=0, , \\["
-    },
-    "Instances Capacity CTRL": {
-        "files": [
-            "awx-manage_list_instances"
-        ],
-        "path": "sos_commands/tower",
-        "query": "capacity=0, , \\["
+        "query": "capacity=0, \\["
     },
     "Filesystem": {
         "files": [
@@ -47,7 +30,7 @@
         "path": "",
         "query": "noexec"
     },
-    "Tower Errors": {
+    "tower errors": {
         "files": [
             "callback_receiver.log",
             "dispatcher.log",
@@ -61,21 +44,6 @@
         ],
         "path": "var/log/tower",
         "query": "error"
-    },
-    "Tower Traceback": {
-        "files": [
-            "callback_receiver.log",
-            "dispatcher.log",
-            "job_lifecycle.log",
-            "management_playbooks.log",
-            "task_system.log",
-            "tower.log",
-            "tower_rbac_migrations.log",
-            "tower_system_tracking_migrations.log",
-            "wsbroadcast.log"
-        ],
-        "path": "var/log/tower",
-        "query": "Traceback"
     },
     "OOM": {
         "files": [
@@ -96,14 +64,14 @@
             "installed-rpms"
         ],
         "path": "",
-        "query": "ansible, automation, receptor, hub, keycloak"
+        "query": "ansible, automation, tower, postgres"
     },
     "Running Processes": {
         "files": [
             "ps"
         ],
         "path": "",
-        "query": "awx, nginx, redis, receptor"
+        "query": "awx, nginx, redis"
     },
     "Supervisor": {
         "files": [
@@ -128,13 +96,6 @@
         ],
         "path": "var/log/nginx",
         "query": "error, 504, denied"
-    },
-    "Receptor": {
-        "files": [
-            "receptor.log"
-        ],
-        "path": "var/log/receptor",
-        "query": "error"
     },
     "LDAP": {
         "files": [
