@@ -10,74 +10,34 @@ import logging.config as loggerconf
 from logging import getLogger
 import inquirer
 from sos_ansible.modules.file_handling import (
-    read_policy,
-    process_rule,
-    validate_tgt_dir,
+    validate_out_dir,
+    data_input,
+    rules_processing,
 )
-from sos_ansible.modules.locating_sos import LocateReports
 from sos_ansible.modules.config_manager import ConfigParser, validator
 
-
+# Setting up local settings
 config = ConfigParser()
 config.setup()
 validator(config.config_handler)
 
+# Setting up Logger
 loggerconf.fileConfig(config.config_file)
 logger = getLogger("root")
 
 
+# Processing user input for directory choice
 def get_user_input(sos_directory):
-    """Select workdir"""
+    """Select work directory"""
     choice = os.listdir(sos_directory)
-    questions = [
-        inquirer.List("case", message="Choose the sos directory", choices=choice),
-    ]
+    try:
+        questions = [
+            inquirer.List("case", message="Choose the sos directory", choices=choice),
+        ]
+    except TypeError:
+        logger.critical("Cancelled by user.")
+        sys.exit(1)
     return inquirer.prompt(questions)["case"]
-
-
-def data_input(sos_directory, rules_file, user_choice):
-    """
-    Load the external sosreport and policy rules
-    """
-    logger.critical("Validating sosreports at the source directory: %s", sos_directory)
-    report_data = LocateReports()
-    node_data = report_data.run(sos_directory, user_choice)
-    logger.critical("Validating rules in place: %s", rules_file)
-    curr_policy = read_policy(rules_file)
-    return node_data, curr_policy
-
-
-def rules_processing(node_data, curr_policy, user_choice, debug):
-    """
-    Read the rules.json file and load it on the file_handling modules for processing.
-    """
-    div = "\n--------\n"
-    for hosts in node_data:
-        hostname = hosts["hostname"]
-        path = hosts["path"]
-        analysis_summary = (
-            f"Summary\n{hostname}:{div}Controller Node: {hosts['controller']}{div}"
-        )
-        logger.critical("Processing node %s:", hostname)
-        for rules in curr_policy:
-            match_count = int()
-            iterator = curr_policy[rules]
-            for files in iterator["files"]:
-                to_read = f"{path}/{iterator['path']}/{files}"
-                query = iterator["query"].replace(", ", "|")
-                match_count += process_rule(
-                    hostname, user_choice, rules, to_read, query
-                )
-                if debug:
-                    logger.debug(
-                        "Rule: %s, Result: %s, Query: %s, Source: %s",
-                        rules,
-                        match_count,
-                        query,
-                        to_read,
-                    )
-            analysis_summary += f"{rules}: {match_count}\n"
-        logger.critical(analysis_summary)
 
 
 def main():
@@ -136,6 +96,7 @@ def main():
                 sys.exit("A case number must be used if running from a container")
     except KeyError:
         pass
+
     # if case number is not provided prompt if provided just use it
     if os.path.isdir(sos_directory) and not params.case:
         user_choice = get_user_input(sos_directory)
@@ -148,23 +109,26 @@ def main():
             sos_directory,
         )
         sys.exit(1)
-    validate_tgt_dir(user_choice)
+
     node_data, curr_policy = data_input(sos_directory, rules_file, user_choice)
     if not node_data:
-        logger.error(
+        logger.critical(
             "No sosreports found, please review the directory %s", sos_directory
         )
-        sys.exit(1)
+        sys.exit(0)
     logger.debug("Node data: %s", node_data)
-    if params.debug:
-        logger.debug("Current policy: %s", curr_policy)
+    logger.debug("Current policy: %s", curr_policy)
+
+    validate_out_dir(user_choice)
+
     rules_processing(node_data, curr_policy, user_choice, params.debug)
+
     logger.critical(
         "Read the matches at %s/%s",
         config.config_handler.get("files", "target"),
         user_choice,
     )
-    logger.critical("sos-ansible finished.")
+    logger.critical("SOS_ANSIBLE - END")
 
 
 if __name__ == "__main__":
