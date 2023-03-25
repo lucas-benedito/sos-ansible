@@ -1,4 +1,4 @@
-name: Pylint
+name: PR - Pylint
 
 on: [pull_request]
 
