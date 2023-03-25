@@ -63,23 +63,20 @@ class LocateReports:
             dirs_handler.append(terms)
         for sos_directory in dirs_handler:
             sos_dir = os.path.abspath(sos_directory)
+            search_dir = os.path.join(sos_dir, user_choice, "sosreport-*")
             logger.error(sos_dir)
             try:
-                with open("/tmp/outme", "w", encoding="utf-8") as file:
-                    for directory in glob.glob(
-                        f"{sos_dir}/{user_choice}/sosreport-*", recursive=False
-                    ):
-                        file.write(f"{directory}\n")
-                        if not os.path.isdir(directory):
-                            continue
-                        hostname, controller = self.get_tower_hostname(directory)
-                        entry = {
-                            "hostname": hostname,
-                            "path": directory.replace(directory + "/", ""),
-                            "controller": controller,
-                        }
-                        ret.append(entry)
-            except FileNotFoundError:
+                for directory in glob.glob(search_dir, recursive=False):
+                    if not os.path.isdir(directory):
+                        continue
+                    hostname, controller = self.get_tower_hostname(directory)
+                    entry = {
+                        "hostname": hostname,
+                        "path": directory.replace(directory + "/", ""),
+                        "controller": controller,
+                    }
+                    ret.append(entry)
+            except Exception:  # pylint: disable=broad-except
                 pass
 
         return ret
