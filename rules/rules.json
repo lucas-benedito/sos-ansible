@@ -30,7 +30,7 @@
         "path": "",
         "query": "noexec"
     },
-    "tower errors": {
+    "Tower Errors": {
         "files": [
             "callback_receiver.log",
             "dispatcher.log",
@@ -44,6 +44,21 @@
         ],
         "path": "var/log/tower",
         "query": "error"
+    },
+    "Tower Traceback": {
+        "files": [
+            "callback_receiver.log",
+            "dispatcher.log",
+            "job_lifecycle.log",
+            "management_playbooks.log",
+            "task_system.log",
+            "tower.log",
+            "tower_rbac_migrations.log",
+            "tower_system_tracking_migrations.log",
+            "wsbroadcast.log"
+        ],
+        "path": "var/log/tower",
+        "query": "Traceback"
     },
     "OOM": {
         "files": [
