@@ -4,7 +4,6 @@ Provide all file handling functions
 
 from json import load, decoder
 import os
-import sys
 import re
 from logging import getLogger
 from shutil import rmtree
@@ -24,21 +23,20 @@ def read_policy(policy_name):
             try:
                 data = load(file)
                 return data
-            except decoder.JSONDecodeError as error:
-                logger.error("Invalid json in %s} file.\n %s", policy_name, error)
-                sys.exit(1)
-    except FileNotFoundError as error:
-        logger.error(
-            "File %s does not exist. Please set another rules file.\n %s",
-            policy_name,
-            error,
+            except decoder.JSONDecodeError:
+                logger.debug("Invalid json in %s file.", policy_name)
+                data = {}
+                return data
+    except FileNotFoundError:
+        logger.debug(
+            "File %s does not exist. Please set another rules file.", policy_name
         )
-        sys.exit(1)
+        data = {}
+        return data
 
 
-def validate_out_dir(directory):
+def validate_out_dir(directory, tgt_dir):
     """Validate if Target Directory exists"""
-    tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
     case_dir = os.path.join(tgt_dir, directory)
     logger.debug("Target Directory: %s, Case Directory: %s", tgt_dir, case_dir)
     if os.path.isdir(case_dir):
@@ -50,28 +48,25 @@ def validate_out_dir(directory):
             rmtree(case_dir)
         except Exception as error:  # pylint: disable=broad-except
             logger.error("Failure while creating %s : %s", case_dir, error)
-            sys.exit(1)
+            raise SystemExit from error
 
 
-def create_dir(directory, hostname):
+def create_case_dir(case_choice, hostname, tgt_dir):
     """Create a directory"""
-    tgt_dir = os.path.abspath(
-        os.path.expanduser(config.config_handler.get("files", "target"))
-    )
-    case_dir = os.path.join(tgt_dir, directory)
+    case_dir = os.path.join(tgt_dir, case_choice)
     try:
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
     except OSError as error:
         logger.error("Failure while creating %s : %s", case_dir, error)
-        sys.exit(1)
-    final_directory = os.path.join(tgt_dir, directory, hostname)
+        raise SystemExit from error
+    final_directory = os.path.join(tgt_dir, case_choice, hostname)
     try:
         if not os.path.isdir(final_directory):
             os.mkdir(final_directory)
     except OSError as error:
         logger.error("Failure while creating %s : %s", final_directory, error)
-        sys.exit(1)
+        raise SystemExit from error
     return final_directory
 
 
@@ -84,13 +79,16 @@ def create_output(final_directory, rules, data):
             file.write(lines)
 
 
-def process_rule(hostname, tgt_dir, rules, file_name, query):
+def process_rule(hostname, case_choice, rules, file_name, query):
     """
     Process each Rule and gather matching data from sosreport files.
     Returns str
     """
     data = ""
     match_count = 0
+    tgt_dir = os.path.abspath(
+        os.path.expanduser(config.config_handler.get("files", "target"))
+    )
 
     if os.path.exists(file_name):
         with open(file_name, "r", encoding="utf-8", errors="replace") as file:
@@ -111,7 +109,7 @@ def process_rule(hostname, tgt_dir, rules, file_name, query):
         logger.info("Skipping %s. Path does not exist.", file_name)
 
     if data:
-        final_directory = create_dir(tgt_dir, hostname)
+        final_directory = create_case_dir(case_choice, hostname, tgt_dir)
         create_output(final_directory, rules, data)
     return match_count
 
@@ -123,7 +121,7 @@ def data_input(sos_directory, rules_file, user_choice):
     logger.critical("Validating sosreports at the source directory: %s", sos_directory)
     report_data = LocateReports()
     node_data = report_data.run(sos_directory, user_choice)
-    logger.critical("Validating rules in place: %s", rules_file)
+    logger.critical("Validating rules in place: %s \n", rules_file)
     curr_policy = read_policy(rules_file)
     return node_data, curr_policy
 

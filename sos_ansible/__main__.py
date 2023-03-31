@@ -6,7 +6,6 @@ sos_ansible, main program
 import argparse
 import os
 import sys
-import logging.config as loggerconf
 from logging import getLogger
 import inquirer
 from sos_ansible.modules.file_handling import (
@@ -14,15 +13,13 @@ from sos_ansible.modules.file_handling import (
     data_input,
     rules_processing,
 )
-from sos_ansible.modules.config_manager import ConfigParser, validator
+from sos_ansible.modules.config_manager import ConfigParser
 
 # Setting up local settings
 config = ConfigParser()
 config.setup()
-validator(config.config_handler)
 
 # Setting up Logger
-loggerconf.fileConfig(config.config_file)
 logger = getLogger("root")
 
 
@@ -97,37 +94,47 @@ def main():
     except KeyError:
         pass
 
+    logger.critical("SOS_ANSIBLE - START")
+    print("")
+
     # if case number is not provided prompt if provided just use it
-    if os.path.isdir(sos_directory) and not params.case:
-        user_choice = get_user_input(sos_directory)
-    elif os.path.isdir(sos_directory) and params.case:
-        user_choice = params.case
-    else:
-        logger.error(
-            "The selected directory %s doesn't exist."
-            "Select a new directory and try again.",
-            sos_directory,
-        )
-        sys.exit(1)
+    if os.path.isdir(sos_directory):
+        if params.case:
+            user_choice = params.case
+        else:
+            user_choice = get_user_input(sos_directory)
+        node_data, curr_policy = data_input(sos_directory, rules_file, user_choice)
+        logger.debug("Node Data: %s, Current Policy: %s", node_data, curr_policy)
 
-    node_data, curr_policy = data_input(sos_directory, rules_file, user_choice)
-    if not node_data:
+    try:
+        if node_data or curr_policy:
+            pass
+    except UnboundLocalError:
+        node_data = []
+        curr_policy = {}
+
+    if node_data or curr_policy:
+        logger.debug("Node data: %s", node_data)
+        logger.debug("Current policy: %s", curr_policy)
+        tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
+        validate_out_dir(user_choice, tgt_dir)
+        rules_processing(node_data, curr_policy, user_choice, params.debug)
         logger.critical(
-            "No sosreports found, please review the directory %s", sos_directory
+            "Read the matches at %s/%s",
+            config.config_handler.get("files", "target"),
+            user_choice,
         )
-        sys.exit(0)
-    logger.debug("Node data: %s", node_data)
-    logger.debug("Current policy: %s", curr_policy)
+    else:
+        if not node_data:
+            logger.critical(
+                "No sosreports found, please review the directory %s", sos_directory
+            )
+        if not curr_policy:
+            logger.critical(
+                "No rules file found, please review the directory %s", rules_file
+            )
+    print("")
 
-    validate_out_dir(user_choice)
-
-    rules_processing(node_data, curr_policy, user_choice, params.debug)
-
-    logger.critical(
-        "Read the matches at %s/%s",
-        config.config_handler.get("files", "target"),
-        user_choice,
-    )
     logger.critical("SOS_ANSIBLE - END")
 
 

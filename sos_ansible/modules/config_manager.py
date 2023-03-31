@@ -3,86 +3,77 @@ Allowing for an external configuration file
 """
 
 import sys
-from pathlib import Path
+import os
 import configparser
+import logging.config
 from shutil import rmtree
 
 
 class ConfigParser:
     """config_parser class for initialization and validation"""
 
-    def __init__(self):
+    def __init__(self, home_dir=os.path.expanduser("~"), tgt_file=".sos_ansible.ini"):
         """Initializing required values"""
-        self.home_dir = Path.home()
+        self.home_dir = home_dir
+        self.tgt_file = tgt_file
+        self.config_file = os.path.join(self.home_dir, self.tgt_file)
         self.config_handler = configparser.ConfigParser()
-        self.config_file = Path.joinpath(self.home_dir, ".sos_ansible.ini")
 
     def setup(self):
         """Setting up config files"""
-        if Path.is_file(self.config_file):
-            self.config_handler.read(self.config_file)
+        if os.path.isfile(self.config_file):
+            with open(self.config_file, "r", encoding="utf-8") as file:
+                self.config_handler.read_file(file)
         else:
-            self.set_config()
+            try:
+                self.set_files_config()
+            except Exception as err:  # pylint: disable=broad-except
+                print(err)
+        self.set_logger_config()
 
-    def set_config(self):
-        """Load config for the loggers"""
-        try:
+    def set_files_config(self):
+        """Load config for local files"""
+        if "files" not in self.config_handler:
             self.config_handler.add_section("files")
             self.config_handler.set("files", "source", "/tmp/sosreports")
             self.config_handler.set("files", "target", "/tmp")
             self.config_handler.set("files", "rules", "/tmp/rules.json")
-        except configparser.DuplicateSectionError:
-            print("Files section already exists")
-        except Exception as error:  # pylint: disable=broad-except
-            sys.exit(error)
-
-        try:
-            self.config_handler.add_section("loggers")
-            self.config_handler.set("loggers", "keys", "root")
-            self.config_handler.add_section("handlers")
-            self.config_handler.set("handlers", "keys", "console, file")
-            self.config_handler.add_section("formatters")
-            self.config_handler.set(
-                "formatters", "keys", "sos_ansible, sos_ansible_asctime"
-            )
-            self.config_handler.add_section("logger_root")
-            self.config_handler.set("logger_root", "level", "DEBUG")
-            self.config_handler.set("logger_root", "handlers", "console,file")
-            self.config_handler.add_section("handler_console")
-            self.config_handler.set("handler_console", "class", "StreamHandler")
-            self.config_handler.set("handler_console", "level", "CRITICAL")
-            self.config_handler.set("handler_console", "formatter", "sos_ansible")
-            self.config_handler.set("handler_console", "args", "(sys.stdout,)")
-            self.config_handler.add_section("handler_file")
-            self.config_handler.set("handler_file", "class", "FileHandler")
-            self.config_handler.set("handler_file", "level", "DEBUG")
-            self.config_handler.set("handler_file", "formatter", "sos_ansible_asctime")
-            self.config_handler.set("handler_file", "args", "('sos-ansible.log', 'a')")
-            self.config_handler.add_section("formatter_sos_ansible")
-            self.config_handler.set("formatter_sos_ansible", "format", "%(message)s")
-            self.config_handler.set("formatter_sos_ansible", "datefmt", "")
-            self.config_handler.set("formatter_sos_ansible", "validate", "True")
-            self.config_handler.set(
-                "formatter_sos_ansible", "class", "logging.Formatter"
-            )
-            self.config_handler.add_section("formatter_sos_ansible_asctime")
-            self.config_handler.set(
-                "formatter_sos_ansible_asctime",
-                "format",
-                "%(asctime)s %(levelname)s %(message)s",
-            )
-            self.config_handler.set("formatter_sos_ansible_asctime", "datefmt", "")
-            self.config_handler.set("formatter_sos_ansible_asctime", "validate", "True")
-            self.config_handler.set(
-                "formatter_sos_ansible_asctime", "class", "logging.Formatter"
-            )
-        except configparser.DuplicateSectionError:
-            print("Loggers section already exists")
-        except Exception as error:  # pylint: disable=broad-except
-            sys.exit(error)
-
         with open(self.config_file, "a", encoding="utf-8") as file:
             self.config_handler.write(file)
+
+    def set_logger_config(self):
+        """Load config for the loggers"""
+        logging_config = {
+            "version": 1,
+            "formatters": {
+                "sos_ansible": {"format": "%(message)s"},
+                "sos_ansible_asctime": {
+                    "format": "%(asctime)s %(levelname)s %(message)s"
+                },
+            },
+            "handlers": {
+                "console": {
+                    "class": "logging.StreamHandler",
+                    "formatter": "sos_ansible",
+                    "level": "CRITICAL",
+                    "stream": "ext://sys.stdout",
+                },
+                "file": {
+                    "class": "logging.FileHandler",
+                    "formatter": "sos_ansible_asctime",
+                    "filename": "sos-ansible.log",
+                    "level": "DEBUG",
+                    "mode": "a",
+                },
+            },
+            "root": {"level": "DEBUG", "handlers": ["console", "file"]},
+        }
+
+        if "logging" in self.config_handler:
+            for key in self.config_handler["logging"]:
+                logging_config[key] = self.config_handler["logging"][key]
+
+        logging.config.dictConfig(logging_config)
 
     def clear_config(self):
         """Delete config file from current user"""
@@ -96,7 +87,7 @@ class ConfigParser:
 def validator(config):
     """Validating basic fields"""
     if "files" not in config:
-        # logger.error("Invalid config file.")
+        print(config.sections())
         sys.exit("Invalid config file.")
 
     base_config = ["source", "target", "rules"]
@@ -104,5 +95,4 @@ def validator(config):
         try:
             config.get("files", items)
         except Exception as error:  # pylint: disable=broad-except
-            # logger.error("Invalid config file.\n %s", error)
             print(error)
