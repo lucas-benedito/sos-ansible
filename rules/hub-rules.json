@@ -1,4 +1,11 @@
 {
+    "Hub Info": {
+        "files": [
+            "settings.py"
+        ],
+        "path": "etc/pulp",
+        "query": ""
+    },
     "Filesystem": {
         "files": [
             "df"
