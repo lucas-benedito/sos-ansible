@@ -59,12 +59,14 @@ def expand_sosreport(tarball,case):
     tgt_dir = os.path.join(os.path.expanduser(config.config_handler.get("files", 'source')),case)
     logger.debug("Untarring provided sosreport %s", tarball)
     try:
-        with zipfile.ZipFile(tarball, 'r') as zip_file:
-            zip_file.extractall(path=tgt_dir)
+        for tar in tarball:
+            with zipfile.ZipFile(tar, 'r') as zip_file:
+                zip_file.extractall(path=tgt_dir)
     except zipfile.BadZipFile:
         try:
-            with tarfile.open(tarball, 'r') as tar_file:
-                tar_file.extractall(path=tgt_dir)
+            for tar in tarball:
+                with tarfile.open(tar, 'r') as tar_file:
+                    tar_file.extractall(path=tgt_dir)
         except tarfile.ReadError:
             logger.error("%s is not a valid archive", tarball)
             sys.exit(1)

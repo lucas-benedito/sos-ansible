@@ -5,10 +5,10 @@ import argparse
 class CheckDependsAction(argparse.Action):
     """custom action to evaluate dependency on case number"""
     def __call__(self, parser, namespace, values, option_string=None):
-        if len(namespace.case) < len(namespace.tarball):
-            parser.error('Missing case number')
-        else:
+        if namespace.case:
             namespace.tarball.append(values)
+        else:
+            parser.error('Missing case number')
 
 
 class Parser(): # pylint: disable=too-few-public-methods
@@ -52,11 +52,10 @@ class Parser(): # pylint: disable=too-few-public-methods
         parser.add_argument(
             "-t",
             "--tarball",
-            type=str,
             action=CheckDependsAction,
-            help="Tarball to expand",
+            help="Path to tarball to expand",
             required=False,
-            default=""
+            default=[]
 
         )
 
