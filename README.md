@@ -145,27 +145,11 @@ Breakdown of args:
 
 ## Additional notes for troubleshooting containerized tool
 
-Currently if you need to debug what is happening inside the container you can comment out the ENTRYPOINT and replace it with CMD
+Currently if you need to debug what is happening inside the container you can use --entrypoint /bin/bash
 
 example:
 ```
-ENTRYPOINT ["python", "sos_ansible"]
-
-```
-
-Replace with:
-
-```
-CMD ["/bin/bash"]
-
-```
-
-Rebuild the container and then use `podman` or `docker` and replace the command:
-
-```
-docker build -t sos-ansible-debug:0.0.1 .
-
-podman run -it --rm -v /tmp/:/tmp/ -v /full/path/to/rules.json:/tmp/rules.json -v /full/path/to/sos-ansible.log:/home/ansible/sos-ansible.log sos-ansible:0.0.1 bash
+podman run --entrypoint /bin/bash -it --rm -v /tmp/:/tmp/ -v /full/path/to/rules.json:/tmp/rules.json -v /full/path/to/sos-ansible.log:/home/ansible/sos-ansible.log sos-ansible:0.0.1
 ```
 
 ---
