@@ -74,9 +74,13 @@ def create_output(final_directory, rules, data):
     """Create the output data for each rule processed"""
     out_file = rules.replace(" ", "_")
     logger.info("Populating file %s/%s", final_directory, out_file)
-    with open(f"{final_directory}/{out_file}", "a", encoding="utf-8") as file:
-        for lines in data:
-            file.write(lines)
+    try:
+        with open(f"{final_directory}/{out_file}", "a", encoding="utf-8") as file:
+            for lines in data:
+                file.write(lines)
+    except Exception as error:  # pylint: disable=broad-except
+        logger.error("Failure while writing file: %s", error)
+        raise SystemExit from error
 
 
 def process_rule(hostname, case_choice, rules, file_name, query):

@@ -9,13 +9,9 @@ from sos_ansible.modules.file_handling import (
     validate_out_dir,
     create_case_dir,
     create_output,
-    process_rule,
-    data_input,
-    rules_processing,
 )
 
-from sos_ansible.modules.config_manager import ConfigParser
-from sos_ansible.tests import data
+from sos_ansible.tests import testdata
 
 
 policy_mock = json.loads(
@@ -37,7 +33,7 @@ class TestFileHandling:
 
     def setup_method(self):
         """Creating object"""
-        self.data = os.path.abspath(os.path.dirname(data.__file__))
+        self.data = os.path.abspath(os.path.dirname(testdata.__file__))
 
     @pytest.fixture
     def cleanup_fixture(self):
@@ -51,8 +47,8 @@ class TestFileHandling:
         "file, expected",
         [
             ("rules.json", policy_mock),
-            ("empty.json", dict()),
-            ("missing.json", dict()),
+            ("empty.json", {}),
+            ("missing.json", {}),
         ],
     )
     @pytest.mark.usefixtures("cleanup_fixture")
@@ -80,15 +76,19 @@ class TestFileHandling:
         """Testing create_dir Failures"""
         tgt_dir = os.path.join(self.data, "outdata")
         create_case_dir("9999999", "testnode", tgt_dir)
+        assert os.path.isdir(os.path.join(tgt_dir, "9999999"))
+        assert os.path.isdir(os.path.join(tgt_dir, "9999999", "testnode"))
 
     def test_create_output(self):
         """Testing create_output Failures"""
-        pass
+        input_data = """A test file
+        Second content
+        """
+        create_output(self.data, "fake_rule", input_data)
+        assert os.path.isfile(os.path.join(self.data, "fake_rule"))
 
     def test_process_rule(self):
         """Testing process_rule Failures"""
-        pass
 
     def test_rules_processing(self):
         """Testing rules_processing Failures"""
-        pass

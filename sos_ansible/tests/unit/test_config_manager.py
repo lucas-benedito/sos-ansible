@@ -3,7 +3,7 @@ import os
 import pytest
 
 from sos_ansible.modules.config_manager import ConfigParser
-from sos_ansible.tests import data
+from sos_ansible.tests import testdata
 
 
 class TestFileHandling:
@@ -11,7 +11,7 @@ class TestFileHandling:
 
     def setup_method(self):
         """Creating object"""
-        self.data = os.path.abspath(os.path.dirname(data.__file__))
+        self.data = os.path.abspath(os.path.dirname(testdata.__file__))
         self.config = ConfigParser(home_dir=self.data, tgt_file="sos_ansible.ini")
 
     @pytest.fixture

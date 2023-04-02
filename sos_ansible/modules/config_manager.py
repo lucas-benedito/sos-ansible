@@ -2,11 +2,12 @@
 Allowing for an external configuration file
 """
 
-import sys
+# import sys
 import os
 import configparser
 import logging.config
-from shutil import rmtree
+
+# from shutil import rmtree
 
 
 class ConfigParser:
@@ -69,30 +70,32 @@ class ConfigParser:
             "root": {"level": "DEBUG", "handlers": ["console", "file"]},
         }
 
-        if "logging" in self.config_handler:
-            for key in self.config_handler["logging"]:
-                logging_config[key] = self.config_handler["logging"][key]
+        # setup custom settings?
+        # if "logging" in self.config_handler:
+        #     for key in self.config_handler["logging"]:
+        #         logging_config[key] = self.config_handler["logging"][key]
 
         logging.config.dictConfig(logging_config)
 
-    def clear_config(self):
-        """Delete config file from current user"""
-        try:
-            rmtree(self.config_file)
-        except Exception as error:  # pylint: disable=broad-except
-            # logger.error(error)
-            sys.exit(f"Failure while deleting {self.config_file}: {error}")
 
+# unused function, can be enabled if necessary in the future
+# def clear_config(self):
+#     """Delete config file from current user"""
+#     try:
+#         rmtree(self.config_file)
+#     except Exception as error:  # pylint: disable=broad-except
+#         # logger.error(error)
+#         sys.exit(f"Failure while deleting {self.config_file}: {error}")
 
-def validator(config):
-    """Validating basic fields"""
-    if "files" not in config:
-        print(config.sections())
-        sys.exit("Invalid config file.")
-
-    base_config = ["source", "target", "rules"]
-    for items in base_config:
-        try:
-            config.get("files", items)
-        except Exception as error:  # pylint: disable=broad-except
-            print(error)
+# def validator(config):
+#    """Validating basic fields"""
+#    if "files" not in config:
+#        print(config.sections())
+#        sys.exit("Invalid config file.")
+#
+#    base_config = ["source", "target", "rules"]
+#    for items in base_config:
+#        try:
+#            config.get("files", items)
+#        except Exception as error:  # pylint: disable=broad-except
+#            print(error)
