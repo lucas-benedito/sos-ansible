@@ -25,6 +25,11 @@ Extract all the sosreport files for evaluation on the same directory as per the 
 ```
 $ tar xf sosreport-lbenedit-test-node-xxxx-xxx-xxx.tar.xz -C /tmp/test_sosreport/9999999
 ```
+### As an alternative to using the tar command
+
+`sos_ansible -c 999999 -t sosreport-lbenedit-test-node-xxxx-xxx-xxx.tar.xz, sosreport-lbenedit-test-node2-xxxx-xxx-xxx.tar.xz`
+
+*Note* -t or --tarball takes a comma separated list of sosreports and untars them in the /tmp/sosreport by default. Case number is mandatory for untar feature
 
 Use the rules file located in this project or create your own. Sharing your rules with your peers is the key for this tools success.
 ```
