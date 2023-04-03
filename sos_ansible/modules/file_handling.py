@@ -6,6 +6,8 @@ from json import load, decoder
 import os
 import sys
 import re
+import tarfile
+import zipfile
 from logging import getLogger
 from shutil import rmtree
 from sos_ansible.modules.config_manager import ConfigParser
@@ -52,6 +54,21 @@ def validate_out_dir(directory):
             logger.error("Failure while creating %s : %s", case_dir, error)
             sys.exit(1)
 
+def expand_sosreport(tarball,case):
+    """Untar sosreport""" 
+    tgt_dir = os.path.join(os.path.expanduser(config.config_handler.get("files", 'source')),case)
+    logger.debug("Untarring provided sosreport %s", tarball)
+    try:
+        for tar in tarball:
+            with zipfile.ZipFile(tar, 'r') as zip_file:
+                zip_file.extractall(path=tgt_dir)
+    except zipfile.BadZipFile:
+        try:
+            for tar in tarball:
+                with tarfile.open(tar, 'r') as tar_file:
+                    tar_file.extractall(path=tgt_dir)
+        except Exception: # pylint: disable=broad-except
+            logger.error("%s is not a valid archive", tarball)
 
 def create_dir(directory, hostname):
     """Create a directory"""

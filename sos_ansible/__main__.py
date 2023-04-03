@@ -2,8 +2,6 @@
 """
 sos_ansible, main program
 """
-
-import argparse
 import os
 import sys
 import logging.config as loggerconf
@@ -13,7 +11,9 @@ from sos_ansible.modules.file_handling import (
     validate_out_dir,
     data_input,
     rules_processing,
+    expand_sosreport,
 )
+from sos_ansible.modules.parsing import Parser
 from sos_ansible.modules.config_manager import ConfigParser, validator
 
 # Setting up local settings
@@ -44,39 +44,8 @@ def main():
     """
     Main function from sos_ansible. This will process all steps for sosreports reading
     """
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument(
-        "-d",
-        "--directory",
-        type=str,
-        help="Directory containing sosreports",
-        required=False,
-        default="",
-    )
-    parser.add_argument(
-        "-r",
-        "--rules",
-        type=str,
-        help="Rules file with full path",
-        required=False,
-        default="",
-    )
-    parser.add_argument(
-        "-c",
-        "--case",
-        type=str,
-        help="Directory number to which the sosreport was extracted",
-        required=False,
-    )
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Enable debug message logging",
-        required=False,
-        default=False,
-    )
-    params = parser.parse_args()
 
+    params = Parser.get_args()
     if params.directory:
         sos_directory = os.path.abspath(params.directory)
     else:
@@ -87,7 +56,8 @@ def main():
         rules_file = os.path.expanduser(params.rules)
     else:
         rules_file = os.path.expanduser(config.config_handler.get("files", "rules"))
-
+    if params.tarball:
+        expand_sosreport(params.tarball, params.case)
     # In order to allow both container and standard command line usage must check for env
     try:
         if os.environ["IS_CONTAINER"]:
