@@ -61,12 +61,12 @@ def expand_sosreport(tarball,case):
     try:
         for tar in tarball:
             with zipfile.ZipFile(tar, 'r') as zip_file:
-                zip_file.extractall(path=os.path.join(tgt_dir,tar))
+                zip_file.extractall(path=os.path.join(tgt_dir,os.path.basename(tar)))
     except zipfile.BadZipFile:
         try:
             for tar in tarball:
                 with tarfile.open(tar, 'r') as tar_file:
-                    tar_file.extractall(path=os.path.join(tgt_dir,tar))
+                    tar_file.extractall(path=os.path.join(tgt_dir,os.path.basename(tar)))
         except tarfile.ReadError:
             logger.error("%s is not a valid archive", tarball)
             sys.exit(1)
