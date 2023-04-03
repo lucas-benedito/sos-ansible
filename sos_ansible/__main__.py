@@ -11,7 +11,7 @@ from sos_ansible.modules.file_handling import (
     validate_out_dir,
     data_input,
     rules_processing,
-    expand_sosreport
+    expand_sosreport,
 )
 from sos_ansible.modules.parsing import Parser
 from sos_ansible.modules.config_manager import ConfigParser, validator
@@ -46,7 +46,6 @@ def main():
     """
 
     params = Parser.get_args()
-
     if params.directory:
         sos_directory = os.path.abspath(params.directory)
     else:
@@ -58,7 +57,7 @@ def main():
     else:
         rules_file = os.path.expanduser(config.config_handler.get("files", "rules"))
     if params.tarball:
-        expand_sosreport(params.tarball,params.case)
+        expand_sosreport(params.tarball, params.case)
     # In order to allow both container and standard command line usage must check for env
     try:
         if os.environ["IS_CONTAINER"]:
