@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sos_ansible"
-version = "1.0.1"
+version = "1.0.2"
 authors = [
     {name = "Lucas Benedito", email = "lbenedit@redhat.com"},
 ]
