@@ -6,7 +6,6 @@ https://github.com/chrismeyersfsu/sosreport-elk
 import glob
 import os
 import re
-import logging.config as loggerconf
 from logging import getLogger
 
 from sos_ansible.modules.config_manager import ConfigParser
@@ -14,7 +13,6 @@ from sos_ansible.modules.config_manager import ConfigParser
 config = ConfigParser()
 config.setup()
 
-loggerconf.fileConfig(config.config_file)
 logger = getLogger("root")
 
 
@@ -64,7 +62,6 @@ class LocateReports:
         for sos_directory in dirs_handler:
             sos_dir = os.path.abspath(sos_directory)
             search_dir = os.path.join(sos_dir, user_choice, "sosreport-*")
-            logger.error(sos_dir)
             try:
                 for directory in glob.glob(search_dir, recursive=False):
                     if not os.path.isdir(directory):
@@ -76,7 +73,7 @@ class LocateReports:
                         "controller": controller,
                     }
                     ret.append(entry)
-            except Exception:  # pylint: disable=broad-except
-                pass
+            except Exception as err:  # pylint: disable=broad-except
+                logger.error(err)
 
         return ret

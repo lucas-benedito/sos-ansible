@@ -2,7 +2,7 @@
 import argparse
 
 
-class CheckDependsAction(argparse.Action): # pylint: disable=too-few-public-methods
+class CheckDependsAction(argparse.Action):  # pylint: disable=too-few-public-methods
     """custom action to evaluate dependency on case number"""
 
     def __call__(self, parser, namespace, values, option_string=None):
