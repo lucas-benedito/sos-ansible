@@ -1,19 +1,19 @@
-
 """Custom parser to evaluate conditions"""
 import argparse
 
+
 class CheckDependsAction(argparse.Action): # pylint: disable=too-few-public-methods
     """custom action to evaluate dependency on case number"""
+
     def __call__(self, parser, namespace, values, option_string=None):
         if namespace.case:
-            namespace.tarball.append(values)
+            namespace.tarball = [value.strip() for value in values.split(",")]
         else:
-            parser.error('Missing case number')
+            parser.error("Missing case number")
 
 
-class Parser(): # pylint: disable=too-few-public-methods
+class Parser:  # pylint: disable=too-few-public-methods
     """custom parser to evaluate special conditions"""
-
 
     @staticmethod
     def get_args():
@@ -55,8 +55,7 @@ class Parser(): # pylint: disable=too-few-public-methods
             action=CheckDependsAction,
             help="Path to tarball to expand",
             required=False,
-            default=[]
-
+            default=[],
         )
 
         return parser.parse_args()
