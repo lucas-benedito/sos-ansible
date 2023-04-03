@@ -67,9 +67,8 @@ def expand_sosreport(tarball,case):
             for tar in tarball:
                 with tarfile.open(tar, 'r') as tar_file:
                     tar_file.extractall(path=tgt_dir)
-        except tarfile.ReadError:
+        except Exception:
             logger.error("%s is not a valid archive", tarball)
-            sys.exit(1)
 
 def create_dir(directory, hostname):
     """Create a directory"""
