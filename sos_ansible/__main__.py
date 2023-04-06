@@ -4,7 +4,6 @@ sos_ansible, main program
 """
 import os
 import sys
-import logging.config as loggerconf
 from logging import getLogger
 import inquirer
 from sos_ansible.modules.file_handling import (
@@ -14,15 +13,13 @@ from sos_ansible.modules.file_handling import (
     expand_sosreport,
 )
 from sos_ansible.modules.parsing import Parser
-from sos_ansible.modules.config_manager import ConfigParser, validator
+from sos_ansible.modules.config_manager import ConfigParser
 
 # Setting up local settings
 config = ConfigParser()
 config.setup()
-validator(config.config_handler)
 
 # Setting up Logger
-loggerconf.fileConfig(config.config_file)
 logger = getLogger("root")
 
 
@@ -73,9 +70,9 @@ def main():
     elif os.path.isdir(sos_directory) and params.case:
         user_choice = params.case
     else:
-        logger.error(
+        logger.critical(
             "The selected directory %s doesn't exist."
-            "Select a new directory and try again.",
+            " Select a new directory and try again.",
             sos_directory,
         )
         sys.exit(1)
