@@ -1,7 +1,7 @@
 import pytest
 import os
 import json
-from sos_ansible.modules.file_handling import read_policy
+from sos_ansible.modules.file_handling import read_policy, create_dir
 
 
 @pytest.fixture
@@ -40,6 +40,22 @@ def policy(tmp_path):
     return test_output
 
 
+@pytest.fixture
+def directory(tmp_path):
+    new_dir = os.path.join(tmp_path, "999999")
+    return new_dir
+
+
+@pytest.fixture
+def hostname():
+    return "example.com"
+
+
 def test_read_policy(policy):
     output = read_policy(policy)
     assert "LDAP" in output
+
+
+def test_create_dir(directory, hostname):
+    dir = create_dir(directory, hostname)
+    assert os.path.exists(dir)
