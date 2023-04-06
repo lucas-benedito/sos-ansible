@@ -41,6 +41,14 @@ def policy(tmp_path):
 
 
 @pytest.fixture
+def bad_json(tmp_path):
+    test_output = os.path.join(tmp_path, "rules.json")
+    with open(test_output, "w+t") as f:
+        f.write('{"foo": "bar",}')
+    return test_output
+
+
+@pytest.fixture
 def directory(tmp_path):
     new_dir = os.path.join(tmp_path, "999999")
     return new_dir
@@ -54,6 +62,13 @@ def hostname():
 def test_read_policy(policy):
     output = read_policy(policy)
     assert "LDAP" in output
+
+
+def test_bad_json_read_policy(bad_json):
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        read_policy(bad_json)
+    assert pytest_wrapped_e.type == SystemExit
+    assert pytest_wrapped_e.value.code == 1
 
 
 def test_create_dir(directory, hostname):
