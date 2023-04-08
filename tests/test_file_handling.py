@@ -2,7 +2,7 @@
 import os
 import tarfile
 import pytest
-from sos_ansible.modules.file_handling import read_policy, create_dir, expand_sosreport
+from sos_ansible.modules.file_handling import read_policy, create_dir, validate_out_dir, expand_sosreport
 
 
 def test_read_policy(policy):
@@ -36,3 +36,9 @@ def test_expand_tar(directory):
     expand_sosreport([tar.name], directory)
     expanded = os.listdir(directory)
     assert "tower.log" in expanded
+
+def test_validate_out_dir(tmp_path):
+    """ test validate_out function"""
+    assert os.path.isdir(tmp_path)
+    validate_out_dir(tmp_path)
+    assert not os.path.isdir(tmp_path)
