@@ -1,6 +1,7 @@
 """place new fixtures here"""
 import os
 import json
+import tarfile
 import pytest
 
 
@@ -61,3 +62,15 @@ def directory_fixture(tmp_path):
 def hostname_fixture():
     """returns a hostname"""
     return "example.com"
+
+
+@pytest.fixture(name="tar")
+def tarball_fixture():
+    """create test tar"""
+    tar = tarfile.open("test.tar.gz", "w")  # pylint: disable=consider-using-with
+    for file in ("tower.log", "dispatcher.log", "task_system.log"):
+        with open(file, "w", encoding="utf-8") as new_file:
+            new_file.write("ERROR")
+        tar.add(file)
+    tar.close()
+    return tar

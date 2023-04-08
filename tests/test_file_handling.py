@@ -1,8 +1,12 @@
 """file handling test cases"""
 import os
-import tarfile
 import pytest
-from sos_ansible.modules.file_handling import read_policy, create_dir, validate_out_dir, expand_sosreport
+from sos_ansible.modules.file_handling import (
+    read_policy,
+    create_dir,
+    validate_out_dir,
+    expand_sosreport,
+)
 
 
 def test_read_policy(policy):
@@ -25,20 +29,15 @@ def test_create_dir(directory, hostname):
     assert os.path.exists(newdir)
 
 
-def test_expand_tar(directory):
+def test_expand_tar(tar, directory):
     """test expanding sosreport"""
-    tar = tarfile.open("test.tar.gz", "w") # pylint: disable=consider-using-with
-    for file in ("tower.log", "dispatcher.log", "task_system.log"):
-        with open(file, "w", encoding='utf-8') as new_file:
-            new_file.write("ERROR")
-        tar.add(file)
-    tar.close()
     expand_sosreport([tar.name], directory)
     expanded = os.listdir(directory)
     assert "tower.log" in expanded
 
+
 def test_validate_out_dir(tmp_path):
-    """ test validate_out function"""
+    """test validate_out function"""
     assert os.path.isdir(tmp_path)
     validate_out_dir(tmp_path)
     assert not os.path.isdir(tmp_path)
