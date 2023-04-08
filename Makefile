@@ -1,7 +1,15 @@
+VENV_BASE ?= venv/
+PYTHON ?= python3
+
 init: requirements.txt
-	pip install --upgrade pip
-	pip install -r requirements.txt
-	pip install -e .
+	if [ "$(VENV_BASE)" ]; then \
+		if [ ! -d "$(VENV_BASE)" ]; then \
+			$(PYTHON) -m venv $(VENV_BASE); \
+			$(VENV_BASE)bin/pip install --upgrade pip; \
+			$(VENV_BASE)bin/pip install -r requirements.txt; \
+			$(VENV_BASE)bin/pip install -e . ; \
+		fi; \
+	fi
 
 test:
 	pytest tests
@@ -12,3 +20,4 @@ build:
 
 clean:
 	rm -rf __pycache__ sos_ansible.egg-info
+	rm -rf $(VENV_BASE)
