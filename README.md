@@ -13,10 +13,10 @@ This tool has the purpose of achieving easy sosreport reviewing based on custom 
 * [Additional notes for troubleshooting containerized tool](#additional-notes-for-troubleshooting-containerized-tool)
 * [Setup Development Environment](#setup-development-environment)
 ---
-## Installation
+## Installation and Upgrade
 This tool can be installed from pip
 ```
-$ pip install sos_ansible
+$ pip install -U sos_ansible
 ```
 
 ---
