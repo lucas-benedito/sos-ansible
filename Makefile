@@ -1,12 +1,12 @@
 VENV_BASE ?= venv/
 PYTHON ?= python3
 
-init: requirements.txt
+init: requirements_dev.txt
 	if [ "$(VENV_BASE)" ]; then \
 		if [ ! -d "$(VENV_BASE)" ]; then \
 			$(PYTHON) -m venv $(VENV_BASE); \
 			$(VENV_BASE)bin/pip install --upgrade pip; \
-			$(VENV_BASE)bin/pip install -r requirements.txt; \
+			$(VENV_BASE)bin/pip install -r requirements_dev.txt; \
 			$(VENV_BASE)bin/pip install -e . ; \
 		fi; \
 	fi
