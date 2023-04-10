@@ -74,3 +74,23 @@ def tarball_fixture():
         tar.add(file)
     tar.close()
     return tar
+
+
+@pytest.fixture(name="create_hostname_files")
+def create_hostname_files(tmp_path):
+    """Creating hostname files for locate sos"""
+    file = tmp_path / "000000" / "sosreport-test-000000" / "etc"
+    file.mkdir(parents=True)
+    file = file / "hostname"
+    file.write_text("testnode")
+    file2 = tmp_path / "0123456" / "sosreport-test-123456" / "etc" / "tower" / "conf.d"
+    file2.mkdir(parents=True)
+    file2 = file2 / "cluster_host_id.py"
+    file2.write_text(
+        """# Ansible Automation Platform controller redis settings.
+# TODO: Remove CLUSTER_HOST_ID in favor of storing the host routable name in the database
+# usage of cluster_host is a stop gap.
+
+CLUSTER_HOST_ID = 'testnode'
+"""
+    )
