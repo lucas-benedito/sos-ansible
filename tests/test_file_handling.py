@@ -6,6 +6,7 @@ from sos_ansible.modules.file_handling import (
     create_dir,
     validate_out_dir,
     expand_sosreport,
+    create_output,
 )
 
 

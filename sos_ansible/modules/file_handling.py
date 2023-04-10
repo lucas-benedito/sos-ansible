@@ -4,6 +4,7 @@ Provide all file handling functions
 
 from json import load, decoder
 import os
+from typing import Union
 import sys
 import re
 import tarfile
@@ -19,8 +20,12 @@ config.setup()
 logger = getLogger("root")
 
 
-def read_policy(policy_name):
-    """Read Rules File and returns its contents"""
+def read_policy(policy_name: os.path) -> None:
+    """
+    Read Rules File and returns its contents
+
+    :param os.path policy_name: file path containing rules
+    """
     try:
         with open(policy_name, "r", encoding="utf-8") as file:
             try:
@@ -38,8 +43,12 @@ def read_policy(policy_name):
         sys.exit(1)
 
 
-def validate_out_dir(directory):
-    """Validate if Target Directory exists"""
+def validate_out_dir(directory: str) -> None:
+    """
+    Validate if Target Directory exists
+
+    :param str directory: Directory to save files
+    """
     tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
     case_dir = os.path.join(tgt_dir, directory)
     logger.debug("Target Directory: %s, Case Directory: %s", tgt_dir, case_dir)
@@ -54,24 +63,39 @@ def validate_out_dir(directory):
             logger.error("Failure while creating %s : %s", case_dir, error)
             sys.exit(1)
 
-def expand_sosreport(tarball,case):
-    """Untar sosreport""" 
-    tgt_dir = os.path.join(os.path.expanduser(config.config_handler.get("files", 'source')),case)
+
+def expand_sosreport(tarball: list, case: str) -> None:
+    """
+    Untar sosreport
+
+    :param list tarball: List of files to untar
+    :param str case: case number to store file
+    """
+    tgt_dir = os.path.join(
+        os.path.expanduser(config.config_handler.get("files", "source")), case
+    )
     logger.debug("Untarring provided sosreport %s", tarball)
     try:
         for tar in tarball:
-            with zipfile.ZipFile(tar, 'r') as zip_file:
+            with zipfile.ZipFile(tar, "r") as zip_file:
                 zip_file.extractall(path=tgt_dir)
     except zipfile.BadZipFile:
         try:
             for tar in tarball:
-                with tarfile.open(tar, 'r') as tar_file:
+                with tarfile.open(tar, "r") as tar_file:
                     tar_file.extractall(path=tgt_dir)
-        except Exception: # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             logger.error("%s is not a valid archive", tarball)
 
-def create_dir(directory, hostname):
-    """Create a directory"""
+
+def create_dir(directory: os.path, hostname: str) -> os.path:
+    """
+    Create a directory
+
+    :param os.path directory: case number
+    :param str hostname: hostname collected from reports
+    :return os.path final_directory
+    """
     tgt_dir = os.path.abspath(
         os.path.expanduser(config.config_handler.get("files", "target"))
     )
@@ -92,8 +116,14 @@ def create_dir(directory, hostname):
     return final_directory
 
 
-def create_output(final_directory, rules, data):
-    """Create the output data for each rule processed"""
+def create_output(final_directory: os.path, rules: str, data: dict) -> None:
+    """
+    Create the output data for each rule processed
+
+    :param os.path final_directory: Directory to save content
+    :param str rules: filename based on rules being processed
+    :param str data: Multiline string content to be written
+    """
     out_file = rules.replace(" ", "_")
     logger.info("Populating file %s/%s", final_directory, out_file)
     with open(f"{final_directory}/{out_file}", "a", encoding="utf-8") as file:
@@ -101,10 +131,18 @@ def create_output(final_directory, rules, data):
             file.write(lines)
 
 
-def process_rule(hostname, tgt_dir, rules, file_name, query):
+def process_rule(
+    hostname: str, tgt_dir: os.path, rules: str, file_name: str, query: str
+) -> str:
     """
     Process each Rule and gather matching data from sosreport files.
-    Returns str
+
+    :param str hostname: Hostname extract from report
+    :param os.path tgt_dir: Directory where files will be stored
+    :param str rules: rule name being processed
+    :param str file_name: File to be searched based for this query
+    :param str query: words to be searched inside file
+    :return str match_count
     """
     data = ""
     match_count = 0
@@ -133,9 +171,17 @@ def process_rule(hostname, tgt_dir, rules, file_name, query):
     return match_count
 
 
-def data_input(sos_directory, rules_file, user_choice):
+def data_input(
+    sos_directory: os.path, rules_file: os.path, user_choice: str
+) -> Union[dict, dict]:
     """
     Load the external sosreport and policy rules
+
+    :param os.path sos_directory: Directory containing sosreports
+    :param os.path rules_file: File path containing rules file
+    :param str user_choice: Case number selected
+    :return: node_data, curr_policy
+    :rtype: Union[dict, dict]
     """
     logger.critical("Validating sosreports at the source directory: %s", sos_directory)
     report_data = LocateReports()
@@ -145,9 +191,15 @@ def data_input(sos_directory, rules_file, user_choice):
     return node_data, curr_policy
 
 
-def rules_processing(node_data, curr_policy, user_choice, debug):
+def rules_processing(
+    node_data: dict, curr_policy: dict, user_choice: str, debug: str
+) -> None:
     """
     Read the rules.json file and load it on the file_handling modules for processing.
+    :param dict node_data: Keypair values containing hostname, path, controller
+    :param dict curr_policy: Nested dic containing Rule and its parameters
+    :param str user_choice: Case number string
+    :param str debug: Variable if debug
     """
     div = "\n--------\n"
     for hosts in node_data:

@@ -24,8 +24,13 @@ logger = getLogger("root")
 
 
 # Processing user input for directory choice
-def get_user_input(sos_directory):
-    """Select work directory"""
+def get_user_input(sos_directory: os.path) -> str:
+    """
+    Select work directory
+
+    :params os.path sos_directory: Directory containing the sosreports
+    :return str
+    """
     choice = os.listdir(sos_directory)
     try:
         questions = [
