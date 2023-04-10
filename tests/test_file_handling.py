@@ -42,3 +42,12 @@ def test_validate_out_dir(tmp_path):
     assert os.path.isdir(tmp_path)
     validate_out_dir(tmp_path)
     assert not os.path.isdir(tmp_path)
+
+
+def test_create_output(tmp_path):
+    """test create_output function"""
+    assert os.path.isdir(tmp_path)
+    test_data = "Data to write"
+    create_output(tmp_path, "Filesystem", test_data)
+    expanded = os.listdir(tmp_path)
+    assert "Filesystem" in expanded
