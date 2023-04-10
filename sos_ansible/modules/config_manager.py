@@ -31,10 +31,7 @@ class ConfigParser:
             with open(self.config_file, "r", encoding="utf-8") as file:
                 self.config_handler.read_file(file)
         else:
-            try:
-                self.set_files_config()
-            except Exception as err:  # pylint: disable=broad-except
-                print(err)
+            self.set_files_config()
         self.set_logger_config()
 
     def set_files_config(self):

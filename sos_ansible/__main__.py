@@ -46,6 +46,9 @@ def main():
     """
     Main function from sos_ansible. This will process all steps for sosreports reading
     """
+    tgt_dir = os.path.join(
+        os.path.expanduser(config.config_handler.get("files", "target"))
+    )
 
     params = Parser.get_args()
     if params.directory:
@@ -59,7 +62,7 @@ def main():
     else:
         rules_file = os.path.expanduser(config.config_handler.get("files", "rules"))
     if params.tarball:
-        expand_sosreport(params.tarball, params.case)
+        expand_sosreport(params.tarball, params.case, tgt_dir)
     # In order to allow both container and standard command line usage must check for env
     try:
         if os.environ["IS_CONTAINER"]:
@@ -91,9 +94,9 @@ def main():
     logger.debug("Node data: %s", node_data)
     logger.debug("Current policy: %s", curr_policy)
 
-    validate_out_dir(user_choice)
+    validate_out_dir(user_choice, tgt_dir)
 
-    rules_processing(node_data, curr_policy, user_choice, params.debug)
+    rules_processing(node_data, curr_policy, user_choice, params.debug, tgt_dir)
 
     logger.critical(
         "Read the matches at %s/%s",

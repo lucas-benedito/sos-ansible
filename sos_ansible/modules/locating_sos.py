@@ -75,10 +75,8 @@ class LocateReports:
             sos_dir = os.path.abspath(sos_directory)
             search_dir = os.path.join(sos_dir, user_choice, "sosreport-*")
             logger.error(sos_dir)
-            try:
-                for directory in glob.glob(search_dir, recursive=False):
-                    if not os.path.isdir(directory):
-                        continue
+            for directory in glob.glob(search_dir, recursive=False):
+                if os.path.isdir(directory):
                     hostname, controller = self.get_tower_hostname(directory)
                     entry = {
                         "hostname": hostname,
@@ -86,7 +84,5 @@ class LocateReports:
                         "controller": controller,
                     }
                     ret.append(entry)
-            except Exception:  # pylint: disable=broad-except
-                pass
 
         return ret

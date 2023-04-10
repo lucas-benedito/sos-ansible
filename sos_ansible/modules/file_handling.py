@@ -34,22 +34,21 @@ def read_policy(policy_name: os.path) -> None:
             except decoder.JSONDecodeError as error:
                 logger.error("Invalid json in %s} file.\n %s", policy_name, error)
                 sys.exit(1)
-    except FileNotFoundError as error:
+    except FileNotFoundError:
         logger.error(
-            "File %s does not exist. Please set another rules file.\n %s",
+            "File %s does not exist. Please set another rules file.",
             policy_name,
-            error,
         )
         sys.exit(1)
 
 
-def validate_out_dir(directory: str) -> None:
+def validate_out_dir(directory: str, tgt_dir: os.path) -> None:
     """
     Validate if Target Directory exists
 
     :param str directory: Directory to save files
+    :param os.path tgt_dir: target directory from config file
     """
-    tgt_dir = os.path.expanduser(config.config_handler.get("files", "target"))
     case_dir = os.path.join(tgt_dir, directory)
     logger.debug("Target Directory: %s, Case Directory: %s", tgt_dir, case_dir)
     if os.path.isdir(case_dir):
@@ -57,62 +56,55 @@ def validate_out_dir(directory: str) -> None:
             "The target directory %s exists. Removing it before running the script.",
             case_dir,
         )
-        try:
-            rmtree(case_dir)
-        except Exception as error:  # pylint: disable=broad-except
-            logger.error("Failure while creating %s : %s", case_dir, error)
-            sys.exit(1)
+        rmtree(case_dir)
+        sys.exit(1)
 
 
-def expand_sosreport(tarball: list, case: str) -> None:
+def expand_sosreport(tarball: list, case: str, tgt_dir: os.path) -> None:
     """
     Untar sosreport
 
     :param list tarball: List of files to untar
     :param str case: case number to store file
+    :param os.path tgt_dir: target directory from config file
     """
-    tgt_dir = os.path.join(
-        os.path.expanduser(config.config_handler.get("files", "source")), case
-    )
+    final_dir = os.path.join(tgt_dir, case)
     logger.debug("Untarring provided sosreport %s", tarball)
-    try:
-        for tar in tarball:
-            with zipfile.ZipFile(tar, "r") as zip_file:
-                zip_file.extractall(path=tgt_dir)
-    except zipfile.BadZipFile:
-        try:
-            for tar in tarball:
-                with tarfile.open(tar, "r") as tar_file:
-                    tar_file.extractall(path=tgt_dir)
-        except Exception:  # pylint: disable=broad-except
-            logger.error("%s is not a valid archive", tarball)
+    for tar in tarball:
+        if os.path.isfile(tar):
+            try:
+                with zipfile.ZipFile(tar, "r") as zip_file:
+                    zip_file.extractall(path=final_dir)
+            except zipfile.BadZipFile:
+                try:
+                    with tarfile.open(tar, "r") as tar_file:
+                        tar_file.extractall(path=final_dir)
+                except Exception:  # pylint: disable=broad-except
+                    logger.error("%s is not a valid archive", tarball)
+        else:
+            logger.error("Invalid sosreport file. Please retry.")
+            sys.exit(1)
 
 
-def create_dir(directory: os.path, hostname: str) -> os.path:
+def create_case_dir(case_choice: os.path, hostname: str, tgt_dir: os.path) -> os.path:
     """
     Create a directory
 
-    :param os.path directory: case number
+    :param os.path case_choice: case number
     :param str hostname: hostname collected from reports
+    :param os.path tgt_dir: target directory from config file
     :return os.path final_directory
     """
-    tgt_dir = os.path.abspath(
-        os.path.expanduser(config.config_handler.get("files", "target"))
-    )
-    case_dir = os.path.join(tgt_dir, directory)
+    case_dir = os.path.join(tgt_dir, case_choice)
     try:
         if not os.path.isdir(case_dir):
             os.mkdir(case_dir)
-    except OSError as error:
-        logger.error("Failure while creating %s : %s", case_dir, error)
+    except FileNotFoundError:
+        logger.error("Missing parent directory resulting in failure.")
         sys.exit(1)
-    final_directory = os.path.join(tgt_dir, directory, hostname)
-    try:
-        if not os.path.isdir(final_directory):
-            os.mkdir(final_directory)
-    except OSError as error:
-        logger.error("Failure while creating %s : %s", final_directory, error)
-        sys.exit(1)
+    final_directory = os.path.join(case_dir, hostname)
+    if not os.path.isdir(final_directory):
+        os.mkdir(final_directory)
     return final_directory
 
 
@@ -132,16 +124,22 @@ def create_output(final_directory: os.path, rules: str, data: dict) -> None:
 
 
 def process_rule(
-    hostname: str, tgt_dir: os.path, rules: str, file_name: str, query: str
+    hostname: str,
+    case_choice: os.path,
+    rules: str,
+    file_name: str,
+    query: str,
+    tgt_dir: os.path,
 ) -> str:
     """
     Process each Rule and gather matching data from sosreport files.
 
     :param str hostname: Hostname extract from report
-    :param os.path tgt_dir: Directory where files will be stored
+    :param os.path case_choice: Directory where files will be stored
     :param str rules: rule name being processed
     :param str file_name: File to be searched based for this query
     :param str query: words to be searched inside file
+    :param os.path tgt_dir:
     :return str match_count
     """
     data = ""
@@ -166,7 +164,7 @@ def process_rule(
         logger.info("Skipping %s. Path does not exist.", file_name)
 
     if data:
-        final_directory = create_dir(tgt_dir, hostname)
+        final_directory = create_case_dir(case_choice, hostname, tgt_dir)
         create_output(final_directory, rules, data)
     return match_count
 
@@ -192,7 +190,7 @@ def data_input(
 
 
 def rules_processing(
-    node_data: dict, curr_policy: dict, user_choice: str, debug: str
+    node_data: dict, curr_policy: dict, user_choice: str, debug: str, tgt_dir: os.path
 ) -> None:
     """
     Read the rules.json file and load it on the file_handling modules for processing.
@@ -216,7 +214,7 @@ def rules_processing(
                 to_read = f"{path}/{iterator['path']}/{files}"
                 query = iterator["query"].replace(", ", "|")
                 match_count += process_rule(
-                    hostname, user_choice, rules, to_read, query
+                    hostname, user_choice, rules, to_read, query, tgt_dir
                 )
                 if debug:
                     logger.debug(

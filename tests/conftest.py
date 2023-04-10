@@ -35,6 +35,11 @@ def policy_fixture(tmp_path):
             "path": "var/log/tower",
             "query": "django_ldap_auth",
         },
+        "Tower all": {
+            "files": ["tower.log"],
+            "path": "var/log/tower",
+            "query": "",
+        },
     }
     test_output = os.path.join(tmp_path, "rules.json")
     with open(test_output, "w+", encoding="utf-8") as file_out:
@@ -48,6 +53,13 @@ def bad_json_fixture(tmp_path):
     test_output = os.path.join(tmp_path, "rules.json")
     with open(test_output, "w+", encoding="utf-8") as file_out:
         file_out.write('{"foo": "bar",}')
+    return test_output
+
+
+@pytest.fixture(name="missing_json")
+def missing_json_fixture(tmp_path):
+    """missing json policy file"""
+    test_output = os.path.join(tmp_path, "missing.json")
     return test_output
 
 
@@ -94,3 +106,7 @@ def create_hostname_files(tmp_path):
 CLUSTER_HOST_ID = 'testnode'
 """
     )
+    file3 = tmp_path / "0123456" / "sosreport-test-123456" / "var" / "log" / "tower"
+    file3.mkdir(parents=True)
+    file3 = file3 / "tower.log"
+    file3.write_text("django_ldap_auth test data")
