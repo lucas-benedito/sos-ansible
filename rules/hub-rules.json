@@ -25,7 +25,7 @@
             "messages"
         ],
         "path": "var/log",
-        "query": "error, Traceback, cryptography, LDAPError"
+        "query": "error, Traceback, cryptography"
     },
     "OOM": {
         "files": [
