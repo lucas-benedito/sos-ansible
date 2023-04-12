@@ -56,8 +56,13 @@ def validate_out_dir(directory: str, tgt_dir: os.path) -> None:
             "The target directory %s exists. Removing it before running the script.",
             case_dir,
         )
-        rmtree(case_dir)
-        sys.exit(1)
+        try:
+            rmtree(case_dir)
+        except Exception:  # pylint: disable=broad-except
+            logger.error(
+                "Unable to remove %s, Please remove before rerunning.", case_dir
+            )
+            sys.exit(1)
 
 
 def expand_sosreport(tarball: list, case: str, tgt_dir: os.path) -> None:
