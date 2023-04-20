@@ -6,6 +6,10 @@ class CheckDependsAction(argparse.Action): # pylint: disable=too-few-public-meth
     """custom action to evaluate dependency on case number"""
 
     def __call__(self, parser, namespace, values, option_string=None):
+        casenum=re.search('-(\d{8})\-', values)
+        if casenum:
+            namespace.case = casenum.group().replace('-','')
+
         if namespace.case:
             namespace.tarball = [value.strip() for value in values.split(",")]
         else:
