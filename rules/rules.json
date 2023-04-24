@@ -89,7 +89,7 @@
             "installed-rpms"
         ],
         "path": "",
-        "query": "falcon, crowd"
+        "query": "falcon, crowd, mcafee"
     },
     "Installed Packages": {
         "files": [
