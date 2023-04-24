@@ -22,7 +22,7 @@ class LocateReports:
     Validate the sosreport directory existance and provide the hostname and path for reference
     """
 
-    def get_tower_hostname(self, pathname: os.path) -> Union[str, str] | str:
+    def get_tower_hostname(self, pathname: os.path) -> Union[str, str]:
         """
         Return the hostname
 
