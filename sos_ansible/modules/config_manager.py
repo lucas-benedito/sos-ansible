@@ -14,7 +14,12 @@ class ConfigParser:
     """config_parser class for initialization and validation"""
 
     def __init__(self, home_dir=os.path.expanduser("~"), tgt_file=".sos_ansible.ini"):
-        """Initializing required values"""
+        """
+        Initializing required values
+
+        :param os.path home_dir: Directory where to save config file
+        :param str tgt_file: config file name
+        """
         self.home_dir = home_dir
         self.tgt_file = tgt_file
         self.config_file = os.path.join(self.home_dir, self.tgt_file)
@@ -26,10 +31,7 @@ class ConfigParser:
             with open(self.config_file, "r", encoding="utf-8") as file:
                 self.config_handler.read_file(file)
         else:
-            try:
-                self.set_files_config()
-            except Exception as err:  # pylint: disable=broad-except
-                print(err)
+            self.set_files_config()
         self.set_logger_config()
 
     def set_files_config(self):
