@@ -84,8 +84,9 @@ def expand_sosreport(tarball: list, case: str, tgt_dir: os.path) -> None:
                 try:
                     with tarfile.open(tar, "r") as tar_file:
                         tar_file.extractall(path=final_dir)
-                except Exception:  # pylint: disable=broad-except
-                    logger.error("%s is not a valid archive", tarball)
+                except Exception as err:  # pylint: disable=broad-except
+                    logger.error("%s is not a valid archive.\n%s", tar, err)
+                    continue
         else:
             logger.error("Invalid sosreport file. Please retry.")
             sys.exit(1)

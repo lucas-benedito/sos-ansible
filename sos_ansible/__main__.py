@@ -62,7 +62,7 @@ def main():
     else:
         rules_file = os.path.expanduser(config.config_handler.get("files", "rules"))
     if params.tarball:
-        expand_sosreport(params.tarball, params.case, tgt_dir)
+        expand_sosreport(params.tarball, params.case, sos_directory)
     # In order to allow both container and standard command line usage must check for env
     try:
         if os.environ["IS_CONTAINER"]:
