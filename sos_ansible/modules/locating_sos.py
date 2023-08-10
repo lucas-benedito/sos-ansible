@@ -5,6 +5,7 @@ https://github.com/chrismeyersfsu/sosreport-elk
 
 import glob
 import os
+from typing import Union
 import re
 from logging import getLogger
 
@@ -21,8 +22,14 @@ class LocateReports:
     Validate the sosreport directory existance and provide the hostname and path for reference
     """
 
-    def get_tower_hostname(self, pathname):
-        """Return the hostname"""
+    def get_tower_hostname(self, pathname: os.path) -> Union[str, str]:
+        """
+        Return the hostname
+
+        :param os.path pathname: Directory containing sosreports
+        :return hostname, controller
+        :rtype: Union[str, str] | str
+        """
         path = os.path.join(pathname, "etc", "tower", "conf.d", "cluster_host_id.py")
         try:
             with open(path, encoding="utf-8") as file:
@@ -46,8 +53,13 @@ class LocateReports:
             pass
         return "NOTFOUND"
 
-    def run(self, terms, user_choice):
-        """Return the hostname, path keypair"""
+    def run(self, terms: list, user_choice: str):
+        """
+        :param list terms: list of directories to search
+        :param str user_choice: case number
+
+        Return the hostname, path keypair
+        """
         entry = {
             "hostname": "",
             "path": "",
@@ -63,10 +75,8 @@ class LocateReports:
             sos_dir = os.path.abspath(sos_directory)
             search_dir = os.path.join(sos_dir, user_choice, "sosreport-*")
             logger.error(sos_dir)
-            try:
-                for directory in glob.glob(search_dir, recursive=False):
-                    if not os.path.isdir(directory):
-                        continue
+            for directory in glob.glob(search_dir, recursive=False):
+                if os.path.isdir(directory):
                     hostname, controller = self.get_tower_hostname(directory)
                     entry = {
                         "hostname": hostname,
@@ -74,7 +84,5 @@ class LocateReports:
                         "controller": controller,
                     }
                     ret.append(entry)
-            except Exception:  # pylint: disable=broad-except
-                pass
 
         return ret

@@ -4,7 +4,6 @@ import pytest
 from sos_ansible.modules.parsing import Parser
 
 
-
 def test_parser(capsys):
     """test missing case number"""
     with pytest.raises(SystemExit) as pytest_wrapped_e:
