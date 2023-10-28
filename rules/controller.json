@@ -52,6 +52,34 @@
         "path": "sos_commands/kernel/",
         "query": "OOM"
     },
+    "Free Memory": {
+        "files": [
+            "free"
+        ],
+        "path": "",
+        "query": ""
+    },
+    "CPU Info": {
+        "files": [
+            "lscpu"
+        ],
+        "path": "sos_commands/processor",
+        "query": ""
+    },
+    "RHEL release": {
+        "files": [
+            "redhat-release"
+        ],
+        "path": "etc",
+        "query": ""
+    },
+    "Timezone": {
+        "files": [
+            "date"
+        ],
+        "path": "",
+        "query": ""
+    },
     "Antivirus": {
         "files": [
             "installed-rpms"
@@ -71,7 +99,7 @@
             "ps"
         ],
         "path": "",
-        "query": "awx, nginx, redis, receptor, postgresql"
+        "query": "awx, nginx, redis, receptor, postgresql, postmaster"
     },
     "Supervisor": {
         "files": [
