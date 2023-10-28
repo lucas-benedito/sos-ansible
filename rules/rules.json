@@ -149,5 +149,39 @@
         ],
         "path": "sos_commands/python",
         "query": "ansible"
+    },
+    "PG logs": {
+        "files": [
+            "postgresql-Sun.log",
+            "postgresql-Mon.log",
+            "postgresql-Tue.log",
+            "postgresql-Wed.log",
+            "postgresql-Thu.log",
+            "postgresql-Fri.log",
+            "postgresql-Sat.log"
+        ],
+        "path": "var/lib/pgsql/data/pg_log",
+        "query": "error, fatal, read-only"
+    },
+    "PG Version": {
+        "files": [
+            "PG_VERSION"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG hba Config": {
+        "files": [
+            "pg_hba.conf"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG full config": {
+        "files": [
+            "postgresql.conf"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
     }
 }

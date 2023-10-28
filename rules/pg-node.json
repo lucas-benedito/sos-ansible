@@ -1,0 +1,78 @@
+{
+    "PG Version": {
+        "files": [
+            "PG_VERSION"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG hba Config": {
+        "files": [
+            "pg_hba.conf"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG full config": {
+        "files": [
+            "postgresql.conf"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG Logs": {
+        "files": [
+            "postgresql-Sun.log",
+            "postgresql-Mon.log",
+            "postgresql-Tue.log",
+            "postgresql-Wed.log",
+            "postgresql-Thu.log",
+            "postgresql-Fri.log",
+            "postgresql-Sat.log"
+        ],
+        "path": "var/lib/pgsql/data/pg_log",
+        "query": "error, fatal, read-only"
+    },
+    "Filesystem": {
+        "files": [
+            "df"
+        ],
+        "path": "",
+        "query": "100%"
+    },
+    "noexec": {
+        "files": [
+            "mount"
+        ],
+        "path": "",
+        "query": "noexec"
+    },
+    "OOM": {
+        "files": [
+            "dmesg"
+        ],
+        "path": "sos_commands/kernel/",
+        "query": "OOM"
+    },
+    "Antivirus": {
+        "files": [
+            "installed-rpms"
+        ],
+        "path": "",
+        "query": "falcon, crowd"
+    },
+    "Installed Packages": {
+        "files": [
+            "installed-rpms"
+        ],
+        "path": "",
+        "query": "ansible, automation, tower, postgres"
+    },
+    "Running Processes": {
+        "files": [
+            "ps"
+        ],
+        "path": "",
+        "query": "awx, nginx, redis, postgres"
+    }
+}

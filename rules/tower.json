@@ -71,7 +71,7 @@
             "ps"
         ],
         "path": "",
-        "query": "awx, nginx, redis"
+        "query": "awx, nginx, redis, postgresql"
     },
     "Supervisor": {
         "files": [
@@ -90,9 +90,7 @@
     "Nginx": {
         "files": [
             "error.log",
-            "access.log",
-            "automationcontroller.error.log",
-            "automationcontroller.access.log"
+            "access.log"
         ],
         "path": "var/log/nginx",
         "query": "error, 504, denied"

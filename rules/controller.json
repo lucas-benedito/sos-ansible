@@ -71,7 +71,7 @@
             "ps"
         ],
         "path": "",
-        "query": "awx, nginx, redis, receptor"
+        "query": "awx, nginx, redis, receptor, postgresql"
     },
     "Supervisor": {
         "files": [
