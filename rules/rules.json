@@ -77,6 +77,13 @@
         "path": "var/log/tower",
         "query": "Traceback"
     },
+    "Heartbeat skew - Time Sync issue": {
+        "files": [
+            "tower.log"
+        ],
+        "path": "var/log/tower",
+        "query": "Heartbeat skew"
+    },
     "OOM": {
         "files": [
             "dmesg"
