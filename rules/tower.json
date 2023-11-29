@@ -52,6 +52,34 @@
         "path": "sos_commands/kernel/",
         "query": "OOM"
     },
+    "Free Memory": {
+        "files": [
+            "free"
+        ],
+        "path": "",
+        "query": ""
+    },
+    "CPU Info": {
+        "files": [
+            "lscpu"
+        ],
+        "path": "sos_commands/processor",
+        "query": ""
+    },
+    "RHEL release": {
+        "files": [
+            "redhat-release"
+        ],
+        "path": "etc",
+        "query": ""
+    },
+    "Timezone": {
+        "files": [
+            "date"
+        ],
+        "path": "",
+        "query": ""
+    },
     "Antivirus": {
         "files": [
             "installed-rpms"
@@ -71,7 +99,7 @@
             "ps"
         ],
         "path": "",
-        "query": "awx, nginx, redis"
+        "query": "awx, nginx, redis, postgresql, postmaster"
     },
     "Supervisor": {
         "files": [
@@ -90,9 +118,7 @@
     "Nginx": {
         "files": [
             "error.log",
-            "access.log",
-            "automationcontroller.error.log",
-            "automationcontroller.access.log"
+            "access.log"
         ],
         "path": "var/log/nginx",
         "query": "error, 504, denied"

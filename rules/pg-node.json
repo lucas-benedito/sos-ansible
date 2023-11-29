@@ -1,10 +1,37 @@
 {
-    "Hub Info": {
+    "PG Version": {
         "files": [
-            "settings.py"
+            "PG_VERSION"
         ],
-        "path": "etc/pulp",
+        "path": "var/lib/pgsql/data",
         "query": ""
+    },
+    "PG hba Config": {
+        "files": [
+            "pg_hba.conf"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG full config": {
+        "files": [
+            "postgresql.conf"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG Logs": {
+        "files": [
+            "postgresql-Sun.log",
+            "postgresql-Mon.log",
+            "postgresql-Tue.log",
+            "postgresql-Wed.log",
+            "postgresql-Thu.log",
+            "postgresql-Fri.log",
+            "postgresql-Sat.log"
+        ],
+        "path": "var/lib/pgsql/data/pg_log",
+        "query": "error, fatal, read-only"
     },
     "Filesystem": {
         "files": [
@@ -19,13 +46,6 @@
         ],
         "path": "",
         "query": "noexec"
-    },
-    "Messages Errors": {
-        "files": [
-            "messages"
-        ],
-        "path": "var/log",
-        "query": "error, Traceback, cryptography"
     },
     "OOM": {
         "files": [
@@ -67,37 +87,20 @@
             "installed-rpms"
         ],
         "path": "",
-        "query": "falcon, crowd, mcafee"
+        "query": "falcon, crowd"
     },
     "Installed Packages": {
         "files": [
             "installed-rpms"
         ],
         "path": "",
-        "query": "ansible, automation, receptor, hub, keycloak, postgres"
+        "query": "ansible, automation, tower, postgres"
     },
     "Running Processes": {
         "files": [
             "ps"
         ],
         "path": "",
-        "query": "pulp, nginx, postgres, postmaster"
-    },
-    "Nginx": {
-        "files": [
-            "error.log",
-            "access.log",
-            "automationhub.access.log",
-            "automationhub.error.log"
-        ],
-        "path": "var/log/nginx",
-        "query": "error, 504, denied"
-    },
-    "PIP Conflict": {
-        "files": [
-            "pip_list"
-        ],
-        "path": "sos_commands/python",
-        "query": "ansible"
+        "query": "awx, nginx, redis, postgres, postmaster"
     }
 }

@@ -84,6 +84,34 @@
         "path": "sos_commands/kernel/",
         "query": "OOM"
     },
+    "Free Memory": {
+        "files": [
+            "free"
+        ],
+        "path": "",
+        "query": ""
+    },
+    "CPU Info": {
+        "files": [
+            "lscpu"
+        ],
+        "path": "sos_commands/processor",
+        "query": ""
+    },
+    "RHEL release": {
+        "files": [
+            "redhat-release"
+        ],
+        "path": "etc",
+        "query": ""
+    },
+    "Timezone": {
+        "files": [
+            "date"
+        ],
+        "path": "",
+        "query": ""
+    },
     "Antivirus": {
         "files": [
             "installed-rpms"
@@ -103,7 +131,7 @@
             "ps"
         ],
         "path": "",
-        "query": "awx, nginx, redis, receptor"
+        "query": "awx, nginx, redis, receptor, postgres, postmaster"
     },
     "Supervisor": {
         "files": [
@@ -149,5 +177,39 @@
         ],
         "path": "sos_commands/python",
         "query": "ansible"
+    },
+    "PG logs": {
+        "files": [
+            "postgresql-Sun.log",
+            "postgresql-Mon.log",
+            "postgresql-Tue.log",
+            "postgresql-Wed.log",
+            "postgresql-Thu.log",
+            "postgresql-Fri.log",
+            "postgresql-Sat.log"
+        ],
+        "path": "var/lib/pgsql/data/pg_log",
+        "query": "error, fatal, read-only"
+    },
+    "PG Version": {
+        "files": [
+            "PG_VERSION"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG hba Config": {
+        "files": [
+            "pg_hba.conf"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
+    },
+    "PG full config": {
+        "files": [
+            "postgresql.conf"
+        ],
+        "path": "var/lib/pgsql/data",
+        "query": ""
     }
 }
