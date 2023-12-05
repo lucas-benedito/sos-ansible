@@ -8,8 +8,6 @@ import configparser
 import logging.config
 
 # from shutil import rmtree
-
-
 class ConfigParser:
     """config_parser class for initialization and validation"""
 
@@ -48,6 +46,12 @@ class ConfigParser:
         """Load config for the loggers"""
         logging_config = {
             "version": 1,
+            "filters": {
+                "StdoutFilter": {
+                    "()": "sos_ansible.modules.config_manager.filter_logging",
+                    "level": "INFO"
+                },
+            },        
             "formatters": {
                 "sos_ansible": {"format": "%(message)s"},
                 "sos_ansible_asctime": {
@@ -58,7 +62,8 @@ class ConfigParser:
                 "console": {
                     "class": "logging.StreamHandler",
                     "formatter": "sos_ansible",
-                    "level": "CRITICAL",
+                    "level": "INFO",
+                    "filters": ["StdoutFilter"],
                     "stream": "ext://sys.stdout",
                 },
                 "file": {
@@ -79,7 +84,13 @@ class ConfigParser:
 
         logging.config.dictConfig(logging_config)
 
+def filter_logging(level):
+    level = getattr(logging, level)
 
+    def filter(record):
+        return record.levelno <= level
+
+    return filter
 # unused function, can be enabled if necessary in the future
 # def clear_config(self):
 #     """Delete config file from current user"""

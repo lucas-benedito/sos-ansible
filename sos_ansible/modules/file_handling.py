@@ -52,7 +52,7 @@ def validate_out_dir(directory: str, tgt_dir: os.path) -> None:
     case_dir = os.path.join(tgt_dir, directory)
     logger.debug("Target Directory: %s, Case Directory: %s", tgt_dir, case_dir)
     if os.path.isdir(case_dir):
-        logger.info(
+        logger.warning(
             "The target directory %s exists. Removing it before running the script.",
             case_dir,
         )
@@ -123,7 +123,7 @@ def create_output(final_directory: os.path, rules: str, data: dict) -> None:
     :param str data: Multiline string content to be written
     """
     out_file = rules.replace(" ", "_")
-    logger.info("Populating file %s/%s", final_directory, out_file)
+    logger.warning("Populating file %s/%s", final_directory, out_file)
     with open(f"{final_directory}/{out_file}", "a", encoding="utf-8") as file:
         for lines in data:
             file.write(lines)
@@ -167,7 +167,7 @@ def process_rule(
                 except Exception as error:  # pylint: disable=broad-except
                     logger.error(error)
     else:
-        logger.info("Skipping %s. Path does not exist.", file_name)
+        logger.warning("Skipping %s. Path does not exist.", file_name)
 
     if data:
         final_directory = create_case_dir(case_choice, hostname, tgt_dir)
@@ -187,10 +187,10 @@ def data_input(
     :return: node_data, curr_policy
     :rtype: Union[dict, dict]
     """
-    logger.critical("Validating sosreports at the source directory: %s", sos_directory)
+    logger.info("Validating sosreports at the source directory: %s", sos_directory)
     report_data = LocateReports()
     node_data = report_data.run(sos_directory, user_choice)
-    logger.critical("Validating rules in place: %s", rules_file)
+    logger.info("Validating rules in place: %s", rules_file)
     curr_policy = read_policy(rules_file)
     return node_data, curr_policy
 
@@ -212,7 +212,7 @@ def rules_processing(
         analysis_summary = (
             f"Summary:\n\n{hostname}:{div}Controller Node: {hosts['controller']}{div}"
         )
-        logger.critical("Processing node %s:", hostname)
+        logger.info("Processing node %s:", hostname)
         for rules in curr_policy:
             match_count = int()
             iterator = curr_policy[rules]
@@ -231,4 +231,4 @@ def rules_processing(
                         to_read,
                     )
             analysis_summary += f"{rules}: {match_count}\n"
-        logger.critical(analysis_summary)
+        logger.info(analysis_summary)
