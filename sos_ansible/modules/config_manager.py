@@ -7,6 +7,7 @@ import os
 import configparser
 import logging.config
 
+
 # from shutil import rmtree
 class ConfigParser:
     """config_parser class for initialization and validation"""
@@ -49,9 +50,9 @@ class ConfigParser:
             "filters": {
                 "StdoutFilter": {
                     "()": "sos_ansible.modules.config_manager.filter_logging",
-                    "level": "INFO"
+                    "level": "INFO",
                 },
-            },        
+            },
             "formatters": {
                 "sos_ansible": {"format": "%(message)s"},
                 "sos_ansible_asctime": {
@@ -84,13 +85,17 @@ class ConfigParser:
 
         logging.config.dictConfig(logging_config)
 
+
 def filter_logging(level):
+    """Filter to enforce stdout with info level only"""
     level = getattr(logging, level)
 
-    def filter(record):
+    def info_filter(record):
         return record.levelno == level
 
-    return filter
+    return info_filter
+
+
 # unused function, can be enabled if necessary in the future
 # def clear_config(self):
 #     """Delete config file from current user"""
