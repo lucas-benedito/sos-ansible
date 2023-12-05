@@ -88,7 +88,7 @@ def filter_logging(level):
     level = getattr(logging, level)
 
     def filter(record):
-        return record.levelno <= level
+        return record.levelno == level
 
     return filter
 # unused function, can be enabled if necessary in the future
