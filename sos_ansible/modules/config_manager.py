@@ -7,9 +7,8 @@ import os
 import configparser
 import logging.config
 
+
 # from shutil import rmtree
-
-
 class ConfigParser:
     """config_parser class for initialization and validation"""
 
@@ -48,6 +47,12 @@ class ConfigParser:
         """Load config for the loggers"""
         logging_config = {
             "version": 1,
+            "filters": {
+                "StdoutFilter": {
+                    "()": "sos_ansible.modules.config_manager.filter_logging",
+                    "level": "INFO",
+                },
+            },
             "formatters": {
                 "sos_ansible": {"format": "%(message)s"},
                 "sos_ansible_asctime": {
@@ -58,7 +63,8 @@ class ConfigParser:
                 "console": {
                     "class": "logging.StreamHandler",
                     "formatter": "sos_ansible",
-                    "level": "CRITICAL",
+                    "level": "INFO",
+                    "filters": ["StdoutFilter"],
                     "stream": "ext://sys.stdout",
                 },
                 "file": {
@@ -78,6 +84,16 @@ class ConfigParser:
         #         logging_config[key] = self.config_handler["logging"][key]
 
         logging.config.dictConfig(logging_config)
+
+
+def filter_logging(level):
+    """Filter to enforce stdout with info level only"""
+    level = getattr(logging, level)
+
+    def info_filter(record):
+        return record.levelno == level
+
+    return info_filter
 
 
 # unused function, can be enabled if necessary in the future

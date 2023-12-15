@@ -37,7 +37,7 @@ def get_user_input(sos_directory: os.path) -> str:
             inquirer.List("case", message="Choose the sos directory", choices=choice),
         ]
     except TypeError:
-        logger.critical("Cancelled by user.")
+        logger.info("Cancelled by user.")
         sys.exit(1)
     return inquirer.prompt(questions)["case"]
 
@@ -78,7 +78,7 @@ def main():
     elif os.path.isdir(sos_directory) and params.case:
         user_choice = params.case
     else:
-        logger.critical(
+        logger.info(
             "The selected directory %s doesn't exist."
             " Select a new directory and try again.",
             sos_directory,
@@ -87,7 +87,7 @@ def main():
 
     node_data, curr_policy = data_input(sos_directory, rules_file, user_choice)
     if not node_data:
-        logger.critical(
+        logger.info(
             "No sosreports found, please review the directory %s", sos_directory
         )
         sys.exit(0)
@@ -98,12 +98,12 @@ def main():
 
     rules_processing(node_data, curr_policy, user_choice, params.debug, tgt_dir)
 
-    logger.critical(
+    logger.info(
         "Read the matches at %s/%s",
         config.config_handler.get("files", "target"),
         user_choice,
     )
-    logger.critical("SOS_ANSIBLE - END")
+    logger.info("SOS_ANSIBLE - END")
 
 
 if __name__ == "__main__":
