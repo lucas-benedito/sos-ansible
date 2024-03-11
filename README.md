@@ -109,7 +109,7 @@ $ cat Filesystem
 /dev/mapper/rhel-amazing  12345   12345         0 100% /amazingfs
 ```
 
-## Running tool via container
+## Running tool via container - OUTDATED
 
 An alternative to running this on cli directly is to use the container version:
 
