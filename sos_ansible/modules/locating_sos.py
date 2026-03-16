@@ -35,10 +35,8 @@ class LocateReports:
             with open(path, encoding="utf-8") as file:
                 data = file.read()
             cl_id = re.search("CLUSTER_HOST_ID = '(.*?)'", data)
-            if cl_id.group(1):
-                hostname = cl_id.group(1)
-                controller = True
-            return hostname, controller
+            if cl_id and cl_id.group(1):
+                return cl_id.group(1), True
         except FileNotFoundError:
             pass
 
