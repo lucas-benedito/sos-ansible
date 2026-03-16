@@ -9,7 +9,7 @@ authors = [
     {name = "Lucas Benedito", email = "lbenedit@redhat.com"},
 ]
 description = "A sosreport parser for ansible"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = {text = "GPL-3.0 license"}
 dependencies = [
     "inquirer",
@@ -24,7 +24,26 @@ readme = "README.md"
 packages = ["sos_ansible"]
 
 [project.optional-dependencies]
-dev = ["black", "pylint", "pytest", "pip-tools"]
+dev = [
+    "astroid==4.0.4",
+    "black==26.3.1",
+    "blessed==1.33.0",
+    "click==8.3.1",
+    "dill==0.4.1",
+    "iniconfig==2.3.0",
+    "inquirer==3.4.1",
+    "isort==8.0.1",
+    "mccabe==0.7.0",
+    "packaging==26.0",
+    "pathspec==1.0.4",
+    "platformdirs==4.9.4",
+    "pluggy==1.6.0",
+    "pylint==4.0.5",
+    "pytest==9.0.2",
+    "readchar==4.2.1",
+    "tomlkit==0.14.0",
+    "wcwidth==0.6.0",
+]
 
 [project.scripts]
 sos_ansible = "sos_ansible.__main__:main"
