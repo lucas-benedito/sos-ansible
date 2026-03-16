@@ -93,9 +93,7 @@ py-version=3.11
 # Discover python modules and packages in the file system subtree.
 recursive=no
 
-# When enabled, pylint would attempt to guess common misconfiguration and emit
-# user-friendly hints instead of false-positive error messages.
-suggestion-mode=yes
+# suggestion-mode was removed in pylint 4.x
 
 # Allow loading of arbitrary C extensions. Extensions are imported into the
 # active Python interpreter and may run arbitrary code.
@@ -279,6 +277,9 @@ ignored-parents=
 
 # Maximum number of arguments for function / method.
 max-args=10
+
+# Maximum number of positional arguments for function / method (pylint 4.x).
+max-positional-arguments=6
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=7
