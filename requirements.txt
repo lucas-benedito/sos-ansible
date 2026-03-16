@@ -12,7 +12,7 @@ python-editor==1.0.4
     # via inquirer
 readchar==4.0.3
     # via inquirer
-six==1.16.0
+six==1.17.0
     # via blessed
 wcwidth==0.2.6
     # via blessed
